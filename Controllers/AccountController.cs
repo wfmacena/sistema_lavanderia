@@ -13,6 +13,47 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
+        private string SomenteNumeros(string valor)
+        {
+            return new string(valor.Where(char.IsDigit).ToArray());
+        }
+
+        private bool CpfValido(string cpf)
+        {
+            cpf = SomenteNumeros(cpf);
+
+            if (cpf.Length != 11)
+                return false;
+
+            if (new string(cpf[0], cpf.Length) == cpf)
+                return false;
+
+            int[] multiplicador1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int[] multiplicador2 = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+            string tempCpf = cpf[..9];
+            int soma = 0;
+
+            for (int i = 0; i < 9; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+
+            int resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+            string digito = resto.ToString();
+
+            tempCpf += digito;
+            soma = 0;
+
+            for (int i = 0; i < 10; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+
+            resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+            digito += resto.ToString();
+
+            return cpf.EndsWith(digito);
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -70,6 +111,15 @@ namespace SistemaLavanderia.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            model.Cpf = SomenteNumeros(model.Cpf);
+            model.Telefone = SomenteNumeros(model.Telefone);
+
+            if (!CpfValido(model.Cpf))
+            {
+                ViewBag.Erro = "CPF inválido.";
+                return View(model);
+            }
 
             bool loginJaExiste = _context.Usuarios.Any(u => u.Login == model.Login);
             if (loginJaExiste)

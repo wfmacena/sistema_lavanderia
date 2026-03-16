@@ -19,7 +19,7 @@ namespace SistemaLavanderia.Models
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O telefone é obrigatório.")]
-        [Phone(ErrorMessage = "Telefone inválido.")]
+        [StringLength(15, ErrorMessage = "Telefone inválido.")]
         public string Telefone { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A senha é obrigatória.")]
