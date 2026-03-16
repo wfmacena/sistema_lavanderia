@@ -73,6 +73,26 @@ namespace SistemaLavanderia.Controllers
             return View(pedido);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarcarComoEntregue(int id)
+        {
+            var pedido = await _context.Pedidos.FindAsync(id);
+
+            if (pedido == null)
+                return NotFound();
+
+            pedido.Status = "Entregue";
+
+            if (!pedido.DataEntrega.HasValue)
+                pedido.DataEntrega = DateTime.Now;
+
+            _context.Update(pedido);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();

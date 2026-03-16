@@ -4,6 +4,20 @@
     var statusAtual = ViewBag.StatusAtual as string;
 }
 
+@functions {
+    public string ObterClasseStatus(string status)
+    {
+        return status switch
+        {
+            "Recebido" => "bg-secondary",
+            "Em Lavagem" => "bg-warning text-dark",
+            "Pronto" => "bg-primary",
+            "Entregue" => "bg-success",
+            _ => "bg-light text-dark"
+        };
+    }
+}
+
 <h2>Pedidos</h2>
 
 <div class="mb-3">
@@ -59,12 +73,24 @@
                     <td>@item.TipoLavagem</td>
                     <td>@item.Quantidade</td>
                     <td>@item.Valor.ToString("C")</td>
-                    <td>@item.Status</td>
+                    <td>
+                        <span class="badge @ObterClasseStatus(item.Status)">
+                            @item.Status
+                        </span>
+                    </td>
                     <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
                     <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
                         <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+
+                        @if (item.Status != "Entregue")
+                        {
+                            <span> | </span>
+                            <form asp-action="MarcarComoEntregue" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Marcar como Entregue</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
