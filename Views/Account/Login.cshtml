@@ -1,0 +1,47 @@
+﻿@model SistemaLavanderia.Models.LoginViewModel
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Entrar no Sistema</h2>
+
+                @if (TempData["Sucesso"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Sucesso"]</div>
+                }
+
+                @if (ViewBag.Erro != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.Erro</div>
+                }
+
+                <form asp-action="Login" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Login" class="form-label">Login</label>
+                        <input asp-for="Login" class="form-control" />
+                        <span asp-validation-for="Login" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Senha" class="form-label">Senha</label>
+                        <input asp-for="Senha" class="form-control" />
+                        <span asp-validation-for="Senha" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100">Entrar</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a asp-action="Register">Criar conta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

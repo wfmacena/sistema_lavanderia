@@ -18,6 +18,9 @@ namespace SistemaLavanderia.Controllers
 
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
             var viewModel = new DashboardViewModel
             {
                 TotalClientes = _context.Clientes.Count(),
