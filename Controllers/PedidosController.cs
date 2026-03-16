@@ -321,6 +321,37 @@ namespace SistemaLavanderia.Controllers
             return View(pedido);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancelar(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            int.TryParse(usuarioIdStr, out int usuarioId);
+
+            var pedido = await _context.Pedidos.FindAsync(id);
+
+            if (pedido == null)
+                return NotFound();
+
+            // segurança → cliente só cancela o próprio pedido
+            if (pedido.UsuarioId != usuarioId)
+                return RedirectToAction("AcessoNegado", "Account");
+
+            // só pode cancelar se ainda não foi entregue
+            if (pedido.Status == "Entregue")
+                return RedirectToAction(nameof(Index));
+
+            pedido.Status = "Cancelado";
+
+            _context.Update(pedido);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

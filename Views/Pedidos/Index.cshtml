@@ -16,6 +16,7 @@
             "Em Lavagem" => "bg-warning text-dark",
             "Pronto" => "bg-primary",
             "Entregue" => "bg-success",
+            "Cancelado" => "bg-danger",
             _ => "bg-light text-dark"
         };
     }
@@ -38,6 +39,7 @@
             <option value="Em Lavagem" selected="@(statusAtual == "Em Lavagem")">Em Lavagem</option>
             <option value="Pronto" selected="@(statusAtual == "Pronto")">Pronto</option>
             <option value="Entregue" selected="@(statusAtual == "Entregue")">Entregue</option>
+            <option value="Cancelado" selected="@(statusAtual == "Cancelado")">Cancelado</option>
         </select>
     </div>
 
@@ -107,7 +109,7 @@
                                 <span> | </span>
                                 <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
 
-                                @if (item.Status != "Entregue")
+                                @if (item.Status != "Entregue" && item.Status != "Cancelado")
                                 {
                                     <span> | </span>
                                     <form asp-action="MarcarComoEntregue"
@@ -123,7 +125,20 @@
                             }
                             else
                             {
-                                <span class="text-muted">Acompanhamento disponível</span>
+                                @if (item.Status != "Entregue" && item.Status != "Cancelado")
+                                {
+                                    <form asp-action="Cancelar" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            Cancelar
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Não disponível</span>
+                                }
                             }
                         </td>
                     </tr>
