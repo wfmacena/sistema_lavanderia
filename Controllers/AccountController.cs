@@ -85,9 +85,17 @@ namespace SistemaLavanderia.Controllers
                 return View(model);
             }
 
+            bool cpfJaExiste = _context.Usuarios.Any(u => u.Cpf == model.Cpf);
+            if (cpfJaExiste)
+            {
+                ViewBag.Erro = "Já existe um usuário com esse CPF.";
+                return View(model);
+            }
+
             var cliente = new Cliente
             {
                 Nome = model.Nome,
+                Cpf = model.Cpf,
                 Email = model.Email,
                 Telefone = model.Telefone
             };
@@ -99,6 +107,7 @@ namespace SistemaLavanderia.Controllers
             {
                 Nome = model.Nome,
                 Login = model.Login,
+                Cpf = model.Cpf,
                 Email = model.Email,
                 Telefone = model.Telefone,
                 Senha = model.Senha,

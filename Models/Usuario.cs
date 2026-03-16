@@ -26,6 +26,10 @@ namespace SistemaLavanderia.Models
         [StringLength(20)]
         public string? Telefone { get; set; }
 
+        [Required(ErrorMessage = "O CPF é obrigatório.")]
+        [StringLength(14)]
+        public string Cpf { get; set; } = string.Empty;
+
         [EmailAddress(ErrorMessage = "Email inválido.")]
         [StringLength(100)]
         public string? Email { get; set; }

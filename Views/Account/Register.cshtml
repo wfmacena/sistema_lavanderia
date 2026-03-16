@@ -25,6 +25,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label asp-for="Cpf" class="form-label">CPF</label>
+                        <input asp-for="Cpf" class="form-control" placeholder="000.000.000-00" />
+                        <span asp-validation-for="Cpf" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
                         <label asp-for="Email" class="form-label"></label>
                         <input asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger"></span>
