@@ -11,7 +11,7 @@ namespace SistemaLavanderia.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ItemPedido",
+                name: "ItensPedido",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -24,9 +24,9 @@ namespace SistemaLavanderia.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemPedido", x => x.Id);
+                    table.PrimaryKey("PK_ItensPedido", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemPedido_Pedidos_PedidoId",
+                        name: "FK_ItensPedido_Pedidos_PedidoId",
                         column: x => x.PedidoId,
                         principalTable: "Pedidos",
                         principalColumn: "Id",
@@ -34,8 +34,8 @@ namespace SistemaLavanderia.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemPedido_PedidoId",
-                table: "ItemPedido",
+                name: "IX_ItensPedido_PedidoId",
+                table: "ItensPedido",
                 column: "PedidoId");
         }
 
@@ -43,7 +43,7 @@ namespace SistemaLavanderia.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ItemPedido");
+                name: "ItensPedido");
         }
     }
 }
