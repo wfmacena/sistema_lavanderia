@@ -1,10 +1,10 @@
 ﻿@model SistemaLavanderia.Models.RegisterViewModel
 
 <div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <h2 class="text-center mb-4">Criar Conta</h2>
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4 fw-bold">Criar Conta</h2>
 
                 @if (ViewBag.Erro != null)
                 {
@@ -13,25 +13,37 @@
 
                 <form asp-action="Register" method="post">
                     <div class="mb-3">
-                        <label asp-for="Nome" class="form-label">Nome</label>
+                        <label asp-for="Nome" class="form-label"></label>
                         <input asp-for="Nome" class="form-control" />
                         <span asp-validation-for="Nome" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Login" class="form-label">Login</label>
+                        <label asp-for="Login" class="form-label"></label>
                         <input asp-for="Login" class="form-control" />
                         <span asp-validation-for="Login" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Senha" class="form-label">Senha</label>
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Telefone" class="form-label"></label>
+                        <input asp-for="Telefone" class="form-control" />
+                        <span asp-validation-for="Telefone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Senha" class="form-label"></label>
                         <input asp-for="Senha" class="form-control" />
                         <span asp-validation-for="Senha" class="text-danger"></span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="ConfirmarSenha" class="form-label">Confirmar Senha</label>
+                    <div class="mb-4">
+                        <label asp-for="ConfirmarSenha" class="form-label"></label>
                         <input asp-for="ConfirmarSenha" class="form-control" />
                         <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
                     </div>
@@ -39,8 +51,8 @@
                     <button type="submit" class="btn btn-success w-100">Cadastrar</button>
                 </form>
 
-                <div class="text-center mt-3">
-                    <a asp-action="Login">Já tenho conta</a>
+                <div class="text-center mt-4">
+                    <a asp-controller="Account" asp-action="Login">Já tenho conta</a>
                 </div>
             </div>
         </div>

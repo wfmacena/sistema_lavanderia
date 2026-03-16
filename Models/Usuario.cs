@@ -6,20 +6,28 @@ namespace SistemaLavanderia.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O nome é obrigatório.")]
         [StringLength(100)]
         public string Nome { get; set; } = string.Empty;
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "O login é obrigatório.")]
+        [StringLength(50)]
         public string Login { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "A senha é obrigatória.")]
         [StringLength(100)]
         public string Senha { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "O perfil é obrigatório.")]
         [StringLength(20)]
         public string Perfil { get; set; } = "Usuario";
+
+        [Phone(ErrorMessage = "Telefone inválido.")]
+        [StringLength(20)]
+        public string? Telefone { get; set; }
+
+        [EmailAddress(ErrorMessage = "Email inválido.")]
+        [StringLength(100)]
+        public string? Email { get; set; }
     }
 }

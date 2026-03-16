@@ -69,10 +69,20 @@ namespace SistemaLavanderia.Controllers
                 return View(model);
             }
 
+            bool emailJaExiste = _context.Usuarios.Any(u => u.Email == model.Email);
+
+            if (emailJaExiste)
+            {
+                ViewBag.Erro = "Já existe um usuário com esse email.";
+                return View(model);
+            }
+
             var usuario = new Usuario
             {
                 Nome = model.Nome,
                 Login = model.Login,
+                Email = model.Email,
+                Telefone = model.Telefone,
                 Senha = model.Senha,
                 Perfil = "Usuario"
             };
