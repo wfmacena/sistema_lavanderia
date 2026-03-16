@@ -9,11 +9,12 @@
         <span asp-validation-for="ClienteId" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="TipoLavagem"></label>
-        <input asp-for="TipoLavagem" class="form-control" />
-        <span asp-validation-for="TipoLavagem" class="text-danger"></span>
-    </div>
+    <select asp-for="TipoLavagem" class="form-control">
+        <option value="">Selecione</option>
+        <option value="Lavagem Comum">Lavagem Comum</option>
+        <option value="Lavagem a Seco">Lavagem a Seco</option>
+        <option value="Edredom">Edredom</option>
+    </select>
 
     <div class="form-group">
         <label asp-for="Quantidade"></label>
@@ -22,9 +23,8 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Valor"></label>
-        <input asp-for="Valor" class="form-control" />
-        <span asp-validation-for="Valor" class="text-danger"></span>
+        <label class="form-label">Valor</label>
+        <input class="form-control" value="Calculado automaticamente" disabled />
     </div>
 
     <div class="form-group">

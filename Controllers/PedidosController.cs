@@ -37,6 +37,19 @@ namespace SistemaLavanderia.Controllers
             return View(await pedidos.ToListAsync());
         }
 
+        private decimal CalcularValor(string tipoLavagem, int quantidade)
+        {
+            decimal precoUnitario = tipoLavagem switch
+            {
+                "Lavagem Comum" => 10.00m,
+                "Lavagem a Seco" => 20.00m,
+                "Edredom" => 35.00m,
+                _ => 0.00m
+            };
+
+            return precoUnitario * quantidade;
+        }
+
         public IActionResult Create()
         {
             ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome");
@@ -49,6 +62,8 @@ namespace SistemaLavanderia.Controllers
         {
             if (ModelState.IsValid)
             {
+                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+
                 _context.Add(pedido);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -77,6 +92,8 @@ namespace SistemaLavanderia.Controllers
 
             if (ModelState.IsValid)
             {
+                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+
                 _context.Update(pedido);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
