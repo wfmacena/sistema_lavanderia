@@ -1,0 +1,38 @@
+﻿@model IEnumerable<SistemaLavanderia.Models.Pedido>
+
+<h2>Pedidos</h2>
+
+<a asp-action="Create" class="btn btn-primary">Novo Pedido</a>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Tipo de Lavagem</th>
+            <th>Quantidade</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Data Entrada</th>
+            <th>Data Entrega</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Cliente?.Nome</td>
+                <td>@item.TipoLavagem</td>
+                <td>@item.Quantidade</td>
+                <td>@item.Valor.ToString("C")</td>
+                <td>@item.Status</td>
+                <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
+                <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

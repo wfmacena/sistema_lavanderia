@@ -1,0 +1,59 @@
+﻿@model SistemaLavanderia.Models.Pedido
+
+<h2>Novo Pedido</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="ClienteId">Cliente</label>
+        <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
+        <span asp-validation-for="ClienteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TipoLavagem"></label>
+        <input asp-for="TipoLavagem" class="form-control" />
+        <span asp-validation-for="TipoLavagem" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Quantidade"></label>
+        <input asp-for="Quantidade" class="form-control" />
+        <span asp-validation-for="Quantidade" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Valor"></label>
+        <input asp-for="Valor" class="form-control" />
+        <span asp-validation-for="Valor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="Recebido">Recebido</option>
+            <option value="Em Lavagem">Em Lavagem</option>
+            <option value="Pronto">Pronto</option>
+            <option value="Entregue">Entregue</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DataEntrada"></label>
+        <input asp-for="DataEntrada" class="form-control" type="date" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DataEntrega"></label>
+        <input asp-for="DataEntrega" class="form-control" type="date" />
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
