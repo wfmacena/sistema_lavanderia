@@ -29,5 +29,8 @@ namespace SistemaLavanderia.Models
         [EmailAddress(ErrorMessage = "Email inválido.")]
         [StringLength(100)]
         public string? Email { get; set; }
+
+        public int? ClienteId { get; set; }
+        public Cliente? Cliente { get; set; }
     }
 }

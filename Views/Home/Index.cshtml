@@ -6,65 +6,68 @@
     var meusPedidos = ViewBag.MeusPedidos as List<Pedido>;
 }
 
-<div class="mb-4">
-    <h1 class="fw-bold">Olá, @nome 👋</h1>
-    <p class="text-muted">
-        @if (perfil == "Administrador")
-        {
-            <span>Gerencie a operação da lavanderia de forma rápida e organizada.</span>
-        }
-        else
-        {
-            <span>Faça sua solicitação de lavagem e acompanhe o andamento dos seus pedidos.</span>
-        }
-    </p>
+<div class="dashboard-header mb-4">
+    <div>
+        <h1 class="dashboard-title">Olá, @nome 👋</h1>
+        <p class="dashboard-subtitle">
+            @if (perfil == "Administrador")
+            {
+                <span>Painel de controle da lavanderia.</span>
+            }
+            else
+            {
+                <span>Acompanhe suas solicitações e faça novos pedidos de lavagem.</span>
+            }
+        </p>
+    </div>
 </div>
 
 @if (perfil == "Administrador")
 {
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title">Gerenciar pedidos</h5>
-                    <p class="text-muted">Acompanhe, atualize e entregue pedidos em andamento.</p>
-                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Abrir pedidos</a>
-                </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon bg-primary-subtle">📦</div>
+                <h5>Gerenciar pedidos</h5>
+                <p>Visualize, atualize status e finalize pedidos.</p>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Abrir pedidos</a>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title">Gerenciar clientes</h5>
-                    <p class="text-muted">Cadastre, edite e organize os clientes da lavanderia.</p>
-                    <a asp-controller="Clientes" asp-action="Index" class="btn btn-dark">Abrir clientes</a>
-                </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon bg-success-subtle">👥</div>
+                <h5>Gerenciar clientes</h5>
+                <p>Cadastre, edite e acompanhe os clientes da lavanderia.</p>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-dark">Abrir clientes</a>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title">Novo pedido</h5>
-                    <p class="text-muted">Registre rapidamente uma nova solicitação de lavagem.</p>
-                    <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Criar pedido</a>
-                </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon bg-warning-subtle">➕</div>
+                <h5>Novo pedido</h5>
+                <p>Registre rapidamente uma nova solicitação de lavagem.</p>
+                <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Criar pedido</a>
             </div>
         </div>
     </div>
 
-    <div class="mt-5">
-        <h3 class="mb-3">Pedidos recentes</h3>
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3>Pedidos recentes</h3>
+            <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-secondary btn-sm">Ver todos</a>
+        </div>
 
         @if (pedidosRecentes != null && pedidosRecentes.Any())
         {
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-striped table-hover shadow-sm">
                     <thead>
                         <tr>
                             <th>Cliente</th>
                             <th>Tipo</th>
+                            <th>Quantidade</th>
                             <th>Status</th>
                             <th>Entrada</th>
                         </tr>
@@ -75,6 +78,7 @@
                             <tr>
                                 <td>@pedido.Cliente?.Nome</td>
                                 <td>@pedido.TipoLavagem</td>
+                                <td>@pedido.Quantidade</td>
                                 <td>@pedido.Status</td>
                                 <td>@pedido.DataEntrada.ToString("dd/MM/yyyy")</td>
                             </tr>
@@ -85,41 +89,44 @@
         }
         else
         {
-            <div class="alert alert-info">Nenhum pedido recente encontrado.</div>
+            <div class="empty-state">
+                Nenhum pedido recente encontrado.
+            </div>
         }
     </div>
 }
 else
 {
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title">Solicitar lavagem</h5>
-                    <p class="text-muted">Envie uma nova solicitação de lavagem de forma simples.</p>
-                    <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Nova solicitação</a>
-                </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon bg-success-subtle">🧺</div>
+                <h5>Nova solicitação</h5>
+                <p>Solicite uma nova lavagem de forma rápida e simples.</p>
+                <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Solicitar lavagem</a>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body">
-                    <h5 class="card-title">Acompanhar pedidos</h5>
-                    <p class="text-muted">Veja o andamento das suas solicitações e o status atual.</p>
-                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Ver meus pedidos</a>
-                </div>
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon bg-primary-subtle">📋</div>
+                <h5>Meus pedidos</h5>
+                <p>Acompanhe o andamento das suas solicitações.</p>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Acompanhar pedidos</a>
             </div>
         </div>
     </div>
 
-    <div class="mt-5">
-        <h3 class="mb-3">Minhas solicitações recentes</h3>
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h3>Minhas solicitações recentes</h3>
+            <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-secondary btn-sm">Ver todas</a>
+        </div>
 
         @if (meusPedidos != null && meusPedidos.Any())
         {
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-striped table-hover shadow-sm">
                     <thead>
                         <tr>
                             <th>Tipo</th>
@@ -146,7 +153,9 @@ else
         }
         else
         {
-            <div class="alert alert-info">Você ainda não possui solicitações cadastradas.</div>
+            <div class="empty-state">
+                Você ainda não possui solicitações cadastradas.
+            </div>
         }
     </div>
 }

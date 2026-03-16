@@ -16,7 +16,7 @@ namespace SistemaLavanderia.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (HttpContext.Session.GetString("UsuarioLogin") != null)
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
                 return RedirectToAction("Index", "Home");
 
             return View();
@@ -43,13 +43,22 @@ namespace SistemaLavanderia.Controllers
             HttpContext.Session.SetString("UsuarioPerfil", usuario.Perfil);
             HttpContext.Session.SetString("UsuarioLogin", usuario.Login);
 
+            if (usuario.ClienteId.HasValue)
+            {
+                HttpContext.Session.SetString("ClienteId", usuario.ClienteId.Value.ToString());
+            }
+            else
+            {
+                HttpContext.Session.Remove("ClienteId");
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            if (HttpContext.Session.GetString("UsuarioLogin") != null)
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
                 return RedirectToAction("Index", "Home");
 
             return View();
@@ -63,7 +72,6 @@ namespace SistemaLavanderia.Controllers
                 return View(model);
 
             bool loginJaExiste = _context.Usuarios.Any(u => u.Login == model.Login);
-
             if (loginJaExiste)
             {
                 ViewBag.Erro = "Já existe um usuário com esse login.";
@@ -71,12 +79,21 @@ namespace SistemaLavanderia.Controllers
             }
 
             bool emailJaExiste = _context.Usuarios.Any(u => u.Email == model.Email);
-
             if (emailJaExiste)
             {
                 ViewBag.Erro = "Já existe um usuário com esse email.";
                 return View(model);
             }
+
+            var cliente = new Cliente
+            {
+                Nome = model.Nome,
+                Email = model.Email,
+                Telefone = model.Telefone
+            };
+
+            _context.Clientes.Add(cliente);
+            _context.SaveChanges();
 
             var usuario = new Usuario
             {
@@ -85,7 +102,8 @@ namespace SistemaLavanderia.Controllers
                 Email = model.Email,
                 Telefone = model.Telefone,
                 Senha = model.Senha,
-                Perfil = "Usuario"
+                Perfil = "Usuario",
+                ClienteId = cliente.Id
             };
 
             _context.Usuarios.Add(usuario);

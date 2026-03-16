@@ -1,51 +1,115 @@
 ﻿@model SistemaLavanderia.Models.Pedido
 
-<h2>Novo Pedido</h2>
+@{
+    var perfil = ViewBag.Perfil as string;
+    var nomeClienteLogado = ViewBag.NomeClienteLogado as string;
+}
+
+<h2>@(perfil == "Administrador" ? "Novo Pedido" : "Nova Solicitação de Lavagem")</h2>
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="ClienteId">Cliente</label>
-        <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
-        <span asp-validation-for="ClienteId" class="text-danger"></span>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h4 class="mb-3">Tabela de preços</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tipo de lavagem</th>
+                            <th>Valor unitário</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lavagem Comum</td>
+                            <td>R$ 10,00</td>
+                        </tr>
+                        <tr>
+                            <td>Lavagem a Seco</td>
+                            <td>R$ 20,00</td>
+                        </tr>
+                        <tr>
+                            <td>Edredom</td>
+                            <td>R$ 35,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <small class="text-muted">
+                O valor final é calculado automaticamente com base no tipo de lavagem e na quantidade.
+            </small>
+        </div>
     </div>
 
-    <select asp-for="TipoLavagem" class="form-control">
-        <option value="">Selecione</option>
-        <option value="Lavagem Comum">Lavagem Comum</option>
-        <option value="Lavagem a Seco">Lavagem a Seco</option>
-        <option value="Edredom">Edredom</option>
-    </select>
+    @if (perfil == "Administrador")
+    {
+        <div class="form-group mb-3">
+            <label asp-for="ClienteId">Cliente</label>
+            <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
+            <span asp-validation-for="ClienteId" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <div class="form-group mb-3">
+            <label>Cliente</label>
+            <input type="text" class="form-control" value="@nomeClienteLogado" readonly />
+            <input type="hidden" asp-for="ClienteId" />
+        </div>
+    }
 
-    <div class="form-group">
+    <div class="form-group mb-3">
+        <label asp-for="TipoLavagem">Tipo de Lavagem</label>
+        <select asp-for="TipoLavagem" class="form-control">
+            <option value="">Selecione</option>
+            <option value="Lavagem Comum">Lavagem Comum</option>
+            <option value="Lavagem a Seco">Lavagem a Seco</option>
+            <option value="Edredom">Edredom</option>
+        </select>
+        <span asp-validation-for="TipoLavagem" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
         <label asp-for="Quantidade"></label>
         <input asp-for="Quantidade" class="form-control" />
         <span asp-validation-for="Quantidade" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group mb-3">
         <label class="form-label">Valor</label>
         <input class="form-control" value="Calculado automaticamente" disabled />
     </div>
 
-    <div class="form-group">
-        <label asp-for="Status"></label>
-        <select asp-for="Status" class="form-control">
-            <option value="Recebido">Recebido</option>
-            <option value="Em Lavagem">Em Lavagem</option>
-            <option value="Pronto">Pronto</option>
-            <option value="Entregue">Entregue</option>
-        </select>
-    </div>
+    @if (perfil == "Administrador")
+    {
+        <div class="form-group mb-3">
+            <label asp-for="Status"></label>
+            <select asp-for="Status" class="form-control">
+                <option value="Recebido">Recebido</option>
+                <option value="Em Lavagem">Em Lavagem</option>
+                <option value="Pronto">Pronto</option>
+                <option value="Entregue">Entregue</option>
+            </select>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" asp-for="Status" value="Recebido" />
+    }
 
-    <div class="form-group">
-        <label asp-for="DataEntrada"></label>
+    <div class="form-group mb-3">
+        <label asp-for="DataEntrada">Data de Entrada</label>
         <input asp-for="DataEntrada" class="form-control" type="date" />
     </div>
 
-    <div class="form-group">
-        <label asp-for="DataEntrega"></label>
-        <input asp-for="DataEntrega" class="form-control" type="date" />
-    </div>
+    @if (perfil == "Administrador")
+    {
+        <div class="form-group mb-3">
+            <label asp-for="DataEntrega">Data de Entrega</label>
+            <input asp-for="DataEntrega" class="form-control" type="date" />
+        </div>
+    }
 
     <br />
     <button type="submit" class="btn btn-success">Salvar</button>

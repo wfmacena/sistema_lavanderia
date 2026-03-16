@@ -29,6 +29,12 @@ namespace SistemaLavanderia.Data
                 .WithMany()
                 .HasForeignKey(p => p.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Usuario>()
+                .HasOne(u => u.Cliente)
+                .WithMany()
+                .HasForeignKey(u => u.ClienteId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

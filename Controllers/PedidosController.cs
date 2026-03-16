@@ -66,8 +66,42 @@ namespace SistemaLavanderia.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome");
-            return View();
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+
+            if (perfil == "Administrador")
+            {
+                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome");
+                ViewBag.NomeClienteLogado = null;
+            }
+            else
+            {
+                var clienteIdStr = HttpContext.Session.GetString("ClienteId");
+                int.TryParse(clienteIdStr, out int clienteId);
+
+                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == clienteId);
+
+                ViewBag.ClienteId = new SelectList(
+                    _context.Clientes.Where(c => c.Id == clienteId),
+                    "Id",
+                    "Nome",
+                    clienteId
+                );
+
+                ViewBag.NomeClienteLogado = cliente?.Nome;
+            }
+
+            ViewBag.Perfil = perfil;
+
+            var pedido = new Pedido
+            {
+                DataEntrada = DateTime.Today,
+                Status = "Recebido"
+            };
+
+            return View(pedido);
         }
 
         [HttpPost]
@@ -77,9 +111,15 @@ namespace SistemaLavanderia.Controllers
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
                 return RedirectToAction("Login", "Account");
 
-            if (ModelState.IsValid)
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+
+            if (perfil != "Administrador")
             {
-                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+                var clienteIdStr = HttpContext.Session.GetString("ClienteId");
+                if (int.TryParse(clienteIdStr, out int clienteId))
+                {
+                    pedido.ClienteId = clienteId;
+                }
 
                 var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
                 if (int.TryParse(usuarioIdStr, out int usuarioId))
@@ -87,12 +127,44 @@ namespace SistemaLavanderia.Controllers
                     pedido.UsuarioId = usuarioId;
                 }
 
+                pedido.Status = "Recebido";
+                pedido.DataEntrega = null;
+            }
+
+            if (pedido.DataEntrada == default)
+            {
+                pedido.DataEntrada = DateTime.Today;
+            }
+
+            if (ModelState.IsValid)
+            {
+                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+
                 _context.Add(pedido);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", pedido.ClienteId);
+            if (perfil == "Administrador")
+            {
+                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", pedido.ClienteId);
+                ViewBag.NomeClienteLogado = null;
+            }
+            else
+            {
+                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == pedido.ClienteId);
+
+                ViewBag.ClienteId = new SelectList(
+                    _context.Clientes.Where(c => c.Id == pedido.ClienteId),
+                    "Id",
+                    "Nome",
+                    pedido.ClienteId
+                );
+
+                ViewBag.NomeClienteLogado = cliente?.Nome;
+            }
+
+            ViewBag.Perfil = perfil;
             return View(pedido);
         }
 
