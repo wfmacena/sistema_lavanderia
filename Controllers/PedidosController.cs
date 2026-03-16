@@ -17,22 +17,36 @@ namespace SistemaLavanderia.Controllers
 
         public async Task<IActionResult> Index(string status, string buscaCliente)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            int.TryParse(usuarioIdStr, out int usuarioId);
+
             var pedidos = _context.Pedidos
                 .Include(p => p.Cliente)
+                .Include(p => p.Usuario)
                 .AsQueryable();
+
+            if (perfil != "Administrador")
+            {
+                pedidos = pedidos.Where(p => p.UsuarioId == usuarioId);
+            }
 
             if (!string.IsNullOrEmpty(status))
             {
                 pedidos = pedidos.Where(p => p.Status == status);
             }
 
-            if (!string.IsNullOrEmpty(buscaCliente))
+            if (!string.IsNullOrEmpty(buscaCliente) && perfil == "Administrador")
             {
                 pedidos = pedidos.Where(p => p.Cliente != null && p.Cliente.Nome.Contains(buscaCliente));
             }
 
             ViewBag.StatusAtual = status;
             ViewBag.BuscaCliente = buscaCliente;
+            ViewBag.Perfil = perfil;
 
             return View(await pedidos.ToListAsync());
         }
@@ -60,9 +74,18 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Pedido pedido)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
             if (ModelState.IsValid)
             {
                 pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+
+                var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+                if (int.TryParse(usuarioIdStr, out int usuarioId))
+                {
+                    pedido.UsuarioId = usuarioId;
+                }
 
                 _context.Add(pedido);
                 await _context.SaveChangesAsync();
@@ -77,6 +100,13 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarcarComoEntregue(int id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
             var pedido = await _context.Pedidos.FindAsync(id);
 
             if (pedido == null)
@@ -95,6 +125,13 @@ namespace SistemaLavanderia.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
             if (id == null) return NotFound();
 
             var pedido = await _context.Pedidos.FindAsync(id);
@@ -108,6 +145,13 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Pedido pedido)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
             if (id != pedido.Id) return NotFound();
 
             if (ModelState.IsValid)
@@ -125,6 +169,13 @@ namespace SistemaLavanderia.Controllers
 
         public async Task<IActionResult> Delete(int? id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
             if (id == null) return NotFound();
 
             var pedido = await _context.Pedidos
@@ -140,6 +191,13 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
             var pedido = await _context.Pedidos.FindAsync(id);
             if (pedido != null)
             {

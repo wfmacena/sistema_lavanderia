@@ -2,6 +2,9 @@
 
 @{
     var statusAtual = ViewBag.StatusAtual as string;
+    var perfil = ViewBag.Perfil as string;
+    var tituloPagina = perfil == "Administrador" ? "Pedidos" : "Minhas Solicitações";
+    var textoBotao = perfil == "Administrador" ? "➕ Novo Pedido" : "➕ Nova Solicitação";
 }
 
 @functions {
@@ -18,11 +21,11 @@
     }
 }
 
-<h2>Pedidos</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@tituloPagina</h2>
 
-<div class="mb-3">
     <a asp-action="Create" class="btn btn-success shadow">
-        ➕ Novo Pedido
+        @textoBotao
     </a>
 </div>
 
@@ -38,10 +41,17 @@
         </select>
     </div>
 
-    <div class="col-md-4">
-        <label class="form-label">Buscar por cliente</label>
-        <input type="text" name="buscaCliente" class="form-control" value="@ViewBag.BuscaCliente" placeholder="Digite o nome do cliente" />
-    </div>
+    @if (perfil == "Administrador")
+    {
+        <div class="col-md-4">
+            <label class="form-label">Buscar por cliente</label>
+            <input type="text"
+                   name="buscaCliente"
+                   class="form-control"
+                   value="@ViewBag.BuscaCliente"
+                   placeholder="Digite o nome do cliente" />
+        </div>
+    }
 
     <div class="col-md-2 d-flex align-items-end">
         <button type="submit" class="btn btn-secondary">Filtrar</button>
@@ -52,56 +62,81 @@
     </div>
 </form>
 
-<table class="table table-striped table-hover shadow-sm">
-    <thead>
-        <tr>
-            <th>Cliente</th>
-            <th>Tipo de Lavagem</th>
-            <th>Quantidade</th>
-            <th>Valor</th>
-            <th>Status</th>
-            <th>Data Entrada</th>
-            <th>Data Entrega</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var item in Model)
+<div class="table-responsive">
+    <table class="table table-striped table-hover shadow-sm">
+        <thead>
+            <tr>
+                @if (perfil == "Administrador")
+                {
+                    <th>Cliente</th>
+                }
+                <th>Tipo de Lavagem</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Data Entrada</th>
+                <th>Data Entrega</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        @if (perfil == "Administrador")
+                        {
+                            <td>@item.Cliente?.Nome</td>
+                        }
+
+                        <td>@item.TipoLavagem</td>
+                        <td>@item.Quantidade</td>
+                        <td>@item.Valor.ToString("C")</td>
+                        <td>
+                            <span class="badge @ObterClasseStatus(item.Status)">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
+                        <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                        <td>
+                            @if (perfil == "Administrador")
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                                <span> | </span>
+                                <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+
+                                @if (item.Status != "Entregue")
+                                {
+                                    <span> | </span>
+                                    <form asp-action="MarcarComoEntregue"
+                                          asp-route-id="@item.Id"
+                                          method="post"
+                                          style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            Marcar como Entregue
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">Acompanhamento disponível</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@item.Cliente?.Nome</td>
-                    <td>@item.TipoLavagem</td>
-                    <td>@item.Quantidade</td>
-                    <td>@item.Valor.ToString("C")</td>
-                    <td>
-                        <span class="badge @ObterClasseStatus(item.Status)">
-                            @item.Status
-                        </span>
-                    </td>
-                    <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
-                    <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
-
-                        @if (item.Status != "Entregue")
-                        {
-                            <span> | </span>
-                            <form asp-action="MarcarComoEntregue" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-success">Marcar como Entregue</button>
-                            </form>
-                        }
+                    <td colspan="@(perfil == "Administrador" ? 8 : 7)" class="text-center">
+                        Nenhum pedido encontrado.
                     </td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="8" class="text-center">Nenhum pedido encontrado.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

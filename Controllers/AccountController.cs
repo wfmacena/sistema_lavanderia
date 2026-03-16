@@ -38,6 +38,7 @@ namespace SistemaLavanderia.Controllers
                 return View(model);
             }
 
+            HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
             HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
             HttpContext.Session.SetString("UsuarioPerfil", usuario.Perfil);
             HttpContext.Session.SetString("UsuarioLogin", usuario.Login);

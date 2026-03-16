@@ -10,6 +10,8 @@ namespace SistemaLavanderia.Models
         [Required(ErrorMessage = "O cliente é obrigatório.")]
         public int ClienteId { get; set; }
 
+        public int? UsuarioId { get; set; }
+
         [Required(ErrorMessage = "O tipo de lavagem é obrigatório.")]
         [StringLength(50)]
         public string TipoLavagem { get; set; } = string.Empty;
@@ -33,5 +35,6 @@ namespace SistemaLavanderia.Models
         public DateTime? DataEntrega { get; set; }
 
         public Cliente? Cliente { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 }

@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lavanderia Manager</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body class="welcome-body">
+
+    <div class="container">
+
+        <div class="navbar-welcome d-flex justify-content-between align-items-center">
+            <a class="brand">
+                <i class="fa-solid fa-basket-shopping"></i> Lavanderia Manager
+            </a>
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-light rounded-pill px-4 fw-semibold">Entrar</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light rounded-pill px-4 fw-semibold">Criar conta</a>
+            </div>
+        </div>
+
+        <section class="hero">
+            <div class="row align-items-center w-100 g-5">
+
+                <div class="col-lg-7">
+
+                    <div class="hero-badge">
+                        Sistema moderno para gestão de lavanderia
+                    </div>
+
+                    <h1 class="hero-title">
+                        Controle total da sua lavanderia
+                    </h1>
+
+                    <p class="hero-text">
+                        Organize pedidos, acompanhe lavagens, visualize clientes e tenha uma gestão profissional e moderna.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a asp-controller="Account" asp-action="Login" class="btn-modern btn-primary-modern">
+                            Entrar no sistema
+                        </a>
+
+                        <a asp-controller="Account" asp-action="Register" class="btn-modern btn-outline-modern">
+                            Criar minha conta
+                        </a>
+                    </div>
+
+                    <div class="hero-features">
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <h5>Pedidos organizados</h5>
+                            <p>Acompanhe cada etapa da lavagem.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <h5>Clientes cadastrados</h5>
+                            <p>Gestão completa de clientes.</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fa-solid fa-shirt"></i>
+                            </div>
+                            <h5>Controle de status</h5>
+                            <p>Visualize rapidamente o andamento.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-5">
+
+                    <div class="hero-panel">
+
+                        <h4 class="fw-bold mb-3">Como funciona</h4>
+
+                        <div class="panel-item">
+                            <span>Pedido recebido</span>
+                            <span class="status-badge status-recebido">Recebido</span>
+                        </div>
+
+                        <div class="panel-item">
+                            <span>Em lavagem</span>
+                            <span class="status-badge status-lavagem">Lavando</span>
+                        </div>
+
+                        <div class="panel-item">
+                            <span>Finalizado</span>
+                            <span class="status-badge status-entregue">Entregue</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

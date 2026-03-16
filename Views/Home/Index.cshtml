@@ -1,62 +1,152 @@
-﻿@model SistemaLavanderia.Models.DashboardViewModel
+﻿@using SistemaLavanderia.Models
+@{
+    var perfil = ViewBag.Perfil as string;
+    var nome = ViewBag.Nome as string;
+    var pedidosRecentes = ViewBag.PedidosRecentes as List<Pedido>;
+    var meusPedidos = ViewBag.MeusPedidos as List<Pedido>;
+}
 
-<div class="text-center mb-4">
-    <h1 class="display-4">Sistema de Lavanderia</h1>
-    <p>Dashboard geral do sistema</p>
+<div class="mb-4">
+    <h1 class="fw-bold">Olá, @nome 👋</h1>
+    <p class="text-muted">
+        @if (perfil == "Administrador")
+        {
+            <span>Gerencie a operação da lavanderia de forma rápida e organizada.</span>
+        }
+        else
+        {
+            <span>Faça sua solicitação de lavagem e acompanhe o andamento dos seus pedidos.</span>
+        }
+    </p>
 </div>
 
-<div class="row">
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Clientes</h5>
-                <p class="card-text fs-2">@Model.TotalClientes</p>
+@if (perfil == "Administrador")
+{
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title">Gerenciar pedidos</h5>
+                    <p class="text-muted">Acompanhe, atualize e entregue pedidos em andamento.</p>
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Abrir pedidos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title">Gerenciar clientes</h5>
+                    <p class="text-muted">Cadastre, edite e organize os clientes da lavanderia.</p>
+                    <a asp-controller="Clientes" asp-action="Index" class="btn btn-dark">Abrir clientes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title">Novo pedido</h5>
+                    <p class="text-muted">Registre rapidamente uma nova solicitação de lavagem.</p>
+                    <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Criar pedido</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Pedidos</h5>
-                <p class="card-text fs-2">@Model.TotalPedidos</p>
+    <div class="mt-5">
+        <h3 class="mb-3">Pedidos recentes</h3>
+
+        @if (pedidosRecentes != null && pedidosRecentes.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Entrada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pedido in pedidosRecentes)
+                        {
+                            <tr>
+                                <td>@pedido.Cliente?.Nome</td>
+                                <td>@pedido.TipoLavagem</td>
+                                <td>@pedido.Status</td>
+                                <td>@pedido.DataEntrada.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Nenhum pedido recente encontrado.</div>
+        }
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitar lavagem</h5>
+                    <p class="text-muted">Envie uma nova solicitação de lavagem de forma simples.</p>
+                    <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Nova solicitação</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title">Acompanhar pedidos</h5>
+                    <p class="text-muted">Veja o andamento das suas solicitações e o status atual.</p>
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Ver meus pedidos</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Recebidos</h5>
-                <p class="card-text fs-2">@Model.PedidosRecebidos</p>
-            </div>
-        </div>
-    </div>
+    <div class="mt-5">
+        <h3 class="mb-3">Minhas solicitações recentes</h3>
 
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Em Lavagem</h5>
-                <p class="card-text fs-2">@Model.PedidosEmLavagem</p>
+        @if (meusPedidos != null && meusPedidos.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Status</th>
+                            <th>Entrada</th>
+                            <th>Entrega</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pedido in meusPedidos)
+                        {
+                            <tr>
+                                <td>@pedido.TipoLavagem</td>
+                                <td>@pedido.Quantidade</td>
+                                <td>@pedido.Status</td>
+                                <td>@pedido.DataEntrada.ToString("dd/MM/yyyy")</td>
+                                <td>@(pedido.DataEntrega.HasValue? pedido.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="alert alert-info">Você ainda não possui solicitações cadastradas.</div>
+        }
     </div>
-
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Prontos</h5>
-                <p class="card-text fs-2">@Model.PedidosProntos</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4 mb-3">
-        <div class="card text-center shadow border-0">
-            <div class="card-body">
-                <h5 class="card-title">Entregues</h5>
-                <p class="card-text fs-2">@Model.PedidosEntregues</p>
-            </div>
-        </div>
-    </div>
-</div>
+}
