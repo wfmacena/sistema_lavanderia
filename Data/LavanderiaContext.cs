@@ -13,6 +13,7 @@ namespace SistemaLavanderia.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<ItemPedido> ItensPedido { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +36,12 @@ namespace SistemaLavanderia.Data
                 .WithMany()
                 .HasForeignKey(u => u.ClienteId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ItemPedido>()
+                .HasOne(i => i.Pedido)
+                .WithMany(p => p.Itens)
+                .HasForeignKey(i => i.PedidoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -36,5 +36,6 @@ namespace SistemaLavanderia.Models
 
         public Cliente? Cliente { get; set; }
         public Usuario? Usuario { get; set; }
+        public List<ItemPedido> Itens { get; set; } = new();
     }
 }

@@ -15,6 +15,55 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
+        private decimal ObterValorUnitarioPeca(string tipoPeca)
+        {
+            return tipoPeca switch
+            {
+                "Camisa" => 8.00m,
+                "Calça" => 10.00m,
+                "Jaqueta" => 18.00m,
+                "Toalha" => 6.00m,
+                "Lençol" => 12.00m,
+                "Cobertor" => 25.00m,
+                "Edredom" => 35.00m,
+                "Outros" => 10.00m,
+                _ => 0.00m
+            };
+        }
+
+        private List<ItemPedido> GerarItensPedido(PedidoCreateViewModel model, int pedidoId)
+        {
+            var itens = new List<ItemPedido>();
+
+            void AdicionarItem(string tipo, int quantidade)
+            {
+                if (quantidade > 0)
+                {
+                    var valorUnitario = ObterValorUnitarioPeca(tipo);
+
+                    itens.Add(new ItemPedido
+                    {
+                        PedidoId = pedidoId,
+                        TipoPeca = tipo,
+                        Quantidade = quantidade,
+                        ValorUnitario = valorUnitario,
+                        Subtotal = valorUnitario * quantidade
+                    });
+                }
+            }
+
+            AdicionarItem("Camisa", model.Camisa);
+            AdicionarItem("Calça", model.Calca);
+            AdicionarItem("Jaqueta", model.Jaqueta);
+            AdicionarItem("Toalha", model.Toalha);
+            AdicionarItem("Lençol", model.Lencol);
+            AdicionarItem("Cobertor", model.Cobertor);
+            AdicionarItem("Edredom", model.Edredom);
+            AdicionarItem("Outros", model.Outros);
+
+            return itens;
+        }
+
         public async Task<IActionResult> Index(string status, string buscaCliente)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
@@ -51,19 +100,6 @@ namespace SistemaLavanderia.Controllers
             return View(await pedidos.ToListAsync());
         }
 
-        private decimal CalcularValor(string tipoLavagem, int quantidade)
-        {
-            decimal precoUnitario = tipoLavagem switch
-            {
-                "Lavagem Comum" => 10.00m,
-                "Lavagem a Seco" => 20.00m,
-                "Edredom" => 35.00m,
-                _ => 0.00m
-            };
-
-            return precoUnitario * quantidade;
-        }
-
         public IActionResult Create()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
@@ -95,18 +131,18 @@ namespace SistemaLavanderia.Controllers
 
             ViewBag.Perfil = perfil;
 
-            var pedido = new Pedido
+            var model = new PedidoCreateViewModel
             {
                 DataEntrada = DateTime.Today,
                 Status = "Recebido"
             };
 
-            return View(pedido);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Pedido pedido)
+        public async Task<IActionResult> Create(PedidoCreateViewModel model)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
                 return RedirectToAction("Login", "Account");
@@ -118,54 +154,82 @@ namespace SistemaLavanderia.Controllers
                 var clienteIdStr = HttpContext.Session.GetString("ClienteId");
                 if (int.TryParse(clienteIdStr, out int clienteId))
                 {
-                    pedido.ClienteId = clienteId;
+                    model.ClienteId = clienteId;
                 }
 
                 var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
                 if (int.TryParse(usuarioIdStr, out int usuarioId))
                 {
-                    pedido.UsuarioId = usuarioId;
+                    model.UsuarioId = usuarioId;
                 }
 
-                pedido.Status = "Recebido";
-                pedido.DataEntrega = null;
+                model.Status = "Recebido";
+                model.DataEntrega = null;
             }
 
-            if (pedido.DataEntrada == default)
+            int quantidadeTotal =
+                model.Camisa + model.Calca + model.Jaqueta + model.Toalha +
+                model.Lencol + model.Cobertor + model.Edredom + model.Outros;
+
+            if (quantidadeTotal <= 0)
             {
-                pedido.DataEntrada = DateTime.Today;
+                ModelState.AddModelError("", "Informe pelo menos uma peça para a solicitação.");
+            }
+
+            if (model.DataEntrada == default)
+            {
+                model.DataEntrada = DateTime.Today;
             }
 
             if (ModelState.IsValid)
             {
-                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
+                var pedido = new Pedido
+                {
+                    ClienteId = model.ClienteId,
+                    UsuarioId = model.UsuarioId,
+                    TipoLavagem = model.TipoLavagem,
+                    Quantidade = quantidadeTotal,
+                    Status = model.Status,
+                    DataEntrada = model.DataEntrada,
+                    DataEntrega = model.DataEntrega,
+                    Valor = 0
+                };
 
-                _context.Add(pedido);
+                _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
+
+                var itens = GerarItensPedido(model, pedido.Id);
+                _context.ItensPedido.AddRange(itens);
+
+                pedido.Valor = itens.Sum(i => i.Subtotal);
+
+                _context.Pedidos.Update(pedido);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             if (perfil == "Administrador")
             {
-                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", pedido.ClienteId);
+                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", model.ClienteId);
                 ViewBag.NomeClienteLogado = null;
             }
             else
             {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == pedido.ClienteId);
+                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == model.ClienteId);
 
                 ViewBag.ClienteId = new SelectList(
-                    _context.Clientes.Where(c => c.Id == pedido.ClienteId),
+                    _context.Clientes.Where(c => c.Id == model.ClienteId),
                     "Id",
                     "Nome",
-                    pedido.ClienteId
+                    model.ClienteId
                 );
 
                 ViewBag.NomeClienteLogado = cliente?.Nome;
             }
 
             ViewBag.Perfil = perfil;
-            return View(pedido);
+            return View(model);
         }
 
         [HttpPost]
@@ -228,8 +292,6 @@ namespace SistemaLavanderia.Controllers
 
             if (ModelState.IsValid)
             {
-                pedido.Valor = CalcularValor(pedido.TipoLavagem, pedido.Quantidade);
-
                 _context.Update(pedido);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
