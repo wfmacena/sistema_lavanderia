@@ -11,7 +11,7 @@
 </div>
 
 <form method="get" asp-action="Index" class="row g-3 mb-3">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <label class="form-label">Filtrar por status</label>
         <select name="status" class="form-control">
             <option value="" selected="@(string.IsNullOrEmpty(statusAtual))">Todos</option>
@@ -20,6 +20,11 @@
             <option value="Pronto" selected="@(statusAtual == "Pronto")">Pronto</option>
             <option value="Entregue" selected="@(statusAtual == "Entregue")">Entregue</option>
         </select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Buscar por cliente</label>
+        <input type="text" name="buscaCliente" class="form-control" value="@ViewBag.BuscaCliente" placeholder="Digite o nome do cliente" />
     </div>
 
     <div class="col-md-2 d-flex align-items-end">

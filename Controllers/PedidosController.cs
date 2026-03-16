@@ -15,7 +15,7 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string status)
+        public async Task<IActionResult> Index(string status, string buscaCliente)
         {
             var pedidos = _context.Pedidos
                 .Include(p => p.Cliente)
@@ -26,7 +26,13 @@ namespace SistemaLavanderia.Controllers
                 pedidos = pedidos.Where(p => p.Status == status);
             }
 
+            if (!string.IsNullOrEmpty(buscaCliente))
+            {
+                pedidos = pedidos.Where(p => p.Cliente != null && p.Cliente.Nome.Contains(buscaCliente));
+            }
+
             ViewBag.StatusAtual = status;
+            ViewBag.BuscaCliente = buscaCliente;
 
             return View(await pedidos.ToListAsync());
         }
