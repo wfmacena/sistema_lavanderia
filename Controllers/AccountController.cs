@@ -32,6 +32,98 @@ namespace SistemaLavanderia.Controllers
         }
 
         [HttpGet]
+        public IActionResult Configuracoes()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            if (!int.TryParse(usuarioIdStr, out int usuarioId))
+                return RedirectToAction("Login", "Account");
+
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == usuarioId);
+            if (usuario == null)
+                return RedirectToAction("Login", "Account");
+
+            var model = new ConfiguracoesContaViewModel
+            {
+                UsuarioId = usuario.Id,
+                Nome = usuario.Nome,
+                Cpf = usuario.Cpf,
+                Email = usuario.Email ?? string.Empty,
+                Telefone = usuario.Telefone ?? string.Empty
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Configuracoes(ConfiguracoesContaViewModel model)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
+                return RedirectToAction("Login", "Account");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            model.Cpf = SomenteNumeros(model.Cpf);
+            model.Telefone = SomenteNumeros(model.Telefone);
+
+            if (!CpfValido(model.Cpf))
+            {
+                ViewBag.Erro = "CPF inválido.";
+                return View(model);
+            }
+
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == model.UsuarioId);
+            if (usuario == null)
+                return RedirectToAction("Login", "Account");
+
+            bool emailJaExiste = _context.Usuarios.Any(u => u.Email == model.Email && u.Id != model.UsuarioId);
+            if (emailJaExiste)
+            {
+                ViewBag.Erro = "Já existe outro usuário com esse email.";
+                return View(model);
+            }
+
+            bool cpfJaExiste = _context.Usuarios.Any(u => u.Cpf == model.Cpf && u.Id != model.UsuarioId);
+            if (cpfJaExiste)
+            {
+                ViewBag.Erro = "Já existe outro usuário com esse CPF.";
+                return View(model);
+            }
+
+            usuario.Nome = model.Nome;
+            usuario.Cpf = model.Cpf;
+            usuario.Email = model.Email;
+            usuario.Telefone = model.Telefone;
+
+            _context.Usuarios.Update(usuario);
+
+            if (usuario.ClienteId.HasValue)
+            {
+                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == usuario.ClienteId.Value);
+                if (cliente != null)
+                {
+                    cliente.Nome = model.Nome;
+                    cliente.Cpf = model.Cpf;
+                    cliente.Email = model.Email;
+                    cliente.Telefone = model.Telefone;
+
+                    _context.Clientes.Update(cliente);
+                }
+            }
+
+            _context.SaveChanges();
+
+            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+
+            TempData["Sucesso"] = "Dados atualizados com sucesso.";
+            return RedirectToAction("Configuracoes");
+        }
+
+        [HttpGet]
         public IActionResult Login()
         {
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))

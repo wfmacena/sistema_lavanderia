@@ -1,0 +1,122 @@
+﻿@model SistemaLavanderia.Models.ConfiguracoesContaViewModel
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4 fw-bold">Configurações da Conta</h2>
+
+                @if (TempData["Sucesso"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Sucesso"]</div>
+                }
+
+                @if (ViewBag.Erro != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.Erro</div>
+                }
+
+                <form asp-action="Configuracoes" method="post">
+                    <input type="hidden" asp-for="UsuarioId" />
+
+                    <div class="mb-3">
+                        <label asp-for="Nome" class="form-label"></label>
+                        <input asp-for="Nome" class="form-control" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Cpf" class="form-label">CPF</label>
+                        <input asp-for="Cpf"
+                               class="form-control"
+                               id="cpf"
+                               maxlength="14"
+                               placeholder="000.000.000-00" />
+                        <span asp-validation-for="Cpf" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Telefone" class="form-label"></label>
+                        <input asp-for="Telefone"
+                               class="form-control"
+                               id="telefone"
+                               maxlength="15"
+                               placeholder="(11) 99999-9999" />
+                        <span asp-validation-for="Telefone" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Salvar alterações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const cpfInput = document.getElementById('cpf');
+        const telefoneInput = document.getElementById('telefone');
+
+        function formatarCpf(value) {
+            value = value.replace(/\D/g, '');
+
+            if (value.length > 11) value = value.slice(0, 11);
+
+            if (value.length > 9) {
+                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                return value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                return value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            }
+
+            return value;
+        }
+
+        function formatarTelefone(value) {
+            value = value.replace(/\D/g, '');
+
+            if (value.length > 11) value = value.slice(0, 11);
+
+            if (value.length === 11) {
+                return value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length === 10) {
+                return value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                return value.replace(/(\d{2})(\d{4,5})(\d{1,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                return value.replace(/(\d{2})(\d+)/, '($1) $2');
+            } else if (value.length > 0) {
+                return value.replace(/(\d+)/, '($1');
+            }
+
+            return value;
+        }
+
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function (e) {
+                e.target.value = formatarCpf(e.target.value);
+            });
+
+            cpfInput.value = formatarCpf(cpfInput.value);
+        }
+
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function (e) {
+                e.target.value = formatarTelefone(e.target.value);
+            });
+
+            telefoneInput.value = formatarTelefone(telefoneInput.value);
+        }
+    </script>
+}
