@@ -1,8 +1,35 @@
 ﻿@model IEnumerable<SistemaLavanderia.Models.Pedido>
 
+@{
+    var statusAtual = ViewBag.StatusAtual as string;
+}
+
 <h2>Pedidos</h2>
 
-<a asp-action="Create" class="btn btn-primary">Novo Pedido</a>
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">Novo Pedido</a>
+</div>
+
+<form method="get" asp-action="Index" class="row g-3 mb-3">
+    <div class="col-md-4">
+        <label class="form-label">Filtrar por status</label>
+        <select name="status" class="form-control">
+            <option value="" selected="@(string.IsNullOrEmpty(statusAtual))">Todos</option>
+            <option value="Recebido" selected="@(statusAtual == "Recebido")">Recebido</option>
+            <option value="Em Lavagem" selected="@(statusAtual == "Em Lavagem")">Em Lavagem</option>
+            <option value="Pronto" selected="@(statusAtual == "Pronto")">Pronto</option>
+            <option value="Entregue" selected="@(statusAtual == "Entregue")">Entregue</option>
+        </select>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <a asp-action="Index" class="btn btn-outline-secondary">Limpar</a>
+    </div>
+</form>
 
 <table class="table mt-3">
     <thead>
@@ -18,20 +45,29 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cliente?.Nome</td>
+                    <td>@item.TipoLavagem</td>
+                    <td>@item.Quantidade</td>
+                    <td>@item.Valor.ToString("C")</td>
+                    <td>@item.Status</td>
+                    <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@item.Cliente?.Nome</td>
-                <td>@item.TipoLavagem</td>
-                <td>@item.Quantidade</td>
-                <td>@item.Valor.ToString("C")</td>
-                <td>@item.Status</td>
-                <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
-                <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
-                </td>
+                <td colspan="8" class="text-center">Nenhum pedido encontrado.</td>
             </tr>
         }
     </tbody>

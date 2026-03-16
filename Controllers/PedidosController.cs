@@ -15,9 +15,19 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string status)
         {
-            var pedidos = _context.Pedidos.Include(p => p.Cliente);
+            var pedidos = _context.Pedidos
+                .Include(p => p.Cliente)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                pedidos = pedidos.Where(p => p.Status == status);
+            }
+
+            ViewBag.StatusAtual = status;
+
             return View(await pedidos.ToListAsync());
         }
 
