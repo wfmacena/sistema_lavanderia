@@ -1,120 +1,156 @@
 ﻿@{
-    Layout = null;
+    ViewData["Title"] = "Welcome";
 }
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lavanderia Clean T-Shirt</title>
+<div class="welcome-page">
+    <section class="welcome-hero">
+        <div class="welcome-hero-content">
+            <span class="welcome-badge">Sistema moderno para gestão de lavanderia</span>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+            <h1>Controle total da sua lavanderia</h1>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-</head>
-<body class="welcome-body">
+            <p>
+                Organize pedidos, acompanhe lavagens, visualize clientes e tenha
+                uma gestão profissional e moderna.
+            </p>
 
-    <div class="container">
+            <div class="welcome-actions">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg">
+                    Entrar no sistema
+                </a>
 
-        <div class="navbar-welcome d-flex justify-content-between align-items-center">
-            <a class="brand">
-                <i class="fa-solid fa-basket-shopping"></i> Lavanderia Clean T-Shirt
-            </a>
-
-            <div class="d-flex gap-2">
-                <a asp-controller="Account" asp-action="Login" class="btn btn-light rounded-pill px-4 fw-semibold">Entrar</a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light rounded-pill px-4 fw-semibold">Criar conta</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">
+                    Criar minha conta
+                </a>
             </div>
         </div>
 
-        <section class="hero">
-            <div class="row align-items-center w-100 g-5">
+        <div class="welcome-how-card">
+            <h3>Como funciona</h3>
 
-                <div class="col-lg-7">
-
-                    <div class="hero-badge">
-                        Sistema moderno para gestão de lavanderia
-                    </div>
-
-                    <h1 class="hero-title">
-                        Controle total da sua lavanderia
-                    </h1>
-
-                    <p class="hero-text">
-                        Organize pedidos, acompanhe lavagens, visualize clientes e tenha uma gestão profissional e moderna.
-                    </p>
-
-                    <div class="hero-actions">
-                        <a asp-controller="Account" asp-action="Login" class="btn-modern btn-primary-modern">
-                            Entrar no sistema
-                        </a>
-
-                        <a asp-controller="Account" asp-action="Register" class="btn-modern btn-outline-modern">
-                            Criar minha conta
-                        </a>
-                    </div>
-
-                    <div class="hero-features">
-
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-clipboard-list"></i>
-                            </div>
-                            <h5>Pedidos organizados</h5>
-                            <p>Acompanhe cada etapa da lavagem.</p>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-users"></i>
-                            </div>
-                            <h5>Clientes cadastrados</h5>
-                            <p>Gestão completa de clientes.</p>
-                        </div>
-
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fa-solid fa-shirt"></i>
-                            </div>
-                            <h5>Controle de status</h5>
-                            <p>Visualize rapidamente o andamento.</p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-5">
-
-                    <div class="hero-panel">
-
-                        <h4 class="fw-bold mb-3">Como funciona</h4>
-
-                        <div class="panel-item">
-                            <span>Pedido recebido</span>
-                            <span class="status-badge status-recebido">Recebido</span>
-                        </div>
-
-                        <div class="panel-item">
-                            <span>Em lavagem</span>
-                            <span class="status-badge status-lavagem">Lavando</span>
-                        </div>
-
-                        <div class="panel-item">
-                            <span>Finalizado</span>
-                            <span class="status-badge status-entregue">Entregue</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div class="how-item">
+                <span>Pedido recebido</span>
+                <span class="status-pill status-gray">Recebido</span>
             </div>
-        </section>
 
-    </div>
+            <div class="how-item">
+                <span>Em lavagem</span>
+                <span class="status-pill status-yellow">Lavando</span>
+            </div>
 
-</body>
-</html>
+            <div class="how-item">
+                <span>Finalizado</span>
+                <span class="status-pill status-green">Entregue</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="welcome-features-section">
+        <div class="welcome-section-title">
+            <h2>Por que escolher nosso sistema?</h2>
+            <p>
+                Uma solução completa para gerenciar sua lavanderia com eficiência e
+                profissionalismo
+            </p>
+        </div>
+
+        <div class="welcome-features-grid">
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h4>Gestão de Clientes</h4>
+                <p>
+                    Cadastre e gerencie todos os seus clientes com informações completas
+                    e histórico de pedidos.
+                </p>
+            </div>
+
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-tags-fill"></i>
+                </div>
+                <h4>Serviços Personalizados</h4>
+                <p>
+                    Configure diferentes tipos de serviços, preços e unidades de medida.
+                </p>
+            </div>
+
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-clipboard-data-fill"></i>
+                </div>
+                <h4>Controle de Pedidos</h4>
+                <p>
+                    Acompanhe o status dos pedidos em tempo real: aguardando, lavando,
+                    pronto ou entregue.
+                </p>
+            </div>
+
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-calculator-fill"></i>
+                </div>
+                <h4>Cálculo Automático</h4>
+                <p>
+                    O sistema calcula automaticamente o valor total dos pedidos baseado
+                    nos serviços selecionados.
+                </p>
+            </div>
+
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h4>Relatórios</h4>
+                <p>
+                    Acompanhe o desempenho do seu negócio com relatórios detalhados.
+                </p>
+            </div>
+
+            <div class="welcome-feature-card">
+                <div class="feature-icon-circle">
+                    <i class="bi bi-shield-fill-check"></i>
+                </div>
+                <h4>Segurança</h4>
+                <p>
+                    Sistema com autenticação e níveis de acesso para maior segurança dos dados.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="welcome-stats-section">
+        <div class="welcome-stat-item">
+            <h3>500+</h3>
+            <p>Clientes Atendidos</p>
+        </div>
+
+        <div class="welcome-stat-item">
+            <h3>1000+</h3>
+            <p>Pedidos Realizados</p>
+        </div>
+
+        <div class="welcome-stat-item">
+            <h3>4+</h3>
+            <p>Tipos de Serviço</p>
+        </div>
+
+        <div class="welcome-stat-item">
+            <h3>99%</h3>
+            <p>Satisfação</p>
+        </div>
+    </section>
+
+    <section class="welcome-cta-section">
+        <h2>Pronto para começar?</h2>
+        <p>
+            Acesse agora mesmo o sistema e comece a gerenciar sua lavanderia
+            de forma profissional.
+        </p>
+
+        <a asp-controller="Pedidos" asp-action="Create" class="btn btn-light btn-lg welcome-cta-btn">
+            <i class="bi bi-plus-circle-fill"></i> Criar Novo Pedido
+        </a>
+    </section>
+</div>

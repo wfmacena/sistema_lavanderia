@@ -1,0 +1,42 @@
+﻿@model List<SistemaLavanderia.Models.ServicoViewModel>
+
+@{
+    ViewData["Title"] = "Serviços de Lavanderia";
+}
+
+<div class="container mt-4 servicos-page">
+    <h1 class="servicos-title">Serviços de Lavanderia</h1>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="servicos-table-header">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>PreçoBase</th>
+                            <th>UnidadeMedida</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var servico in Model)
+                        {
+                            <tr>
+                                <td><strong>@servico.Nome</strong></td>
+                                <td>@servico.Descricao</td>
+                                <td>@servico.PrecoBase.ToString("C")</td>
+                                <td>@servico.UnidadeMedida</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle-fill"></i>
+        Para solicitar um serviço, clique em <strong>"Solicitar Serviço"</strong> no menu superior.
+    </div>
+</div>
