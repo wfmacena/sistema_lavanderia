@@ -12,8 +12,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Lavanderia Clean T-Shirt </title>
+    <title>@ViewData["Title"] - Lavanderia Clean T-Shirt</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SistemaLavanderia.styles.css" asp-append-version="true" />
 </head>
@@ -22,14 +24,16 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Welcome">
-                    🧺 Lavanderia Clean T-Shirt 
+                    🧺 Lavanderia Clean T-Shirt
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
+
                     @if (!string.IsNullOrEmpty(usuarioLogin))
                     {
                         <ul class="navbar-nav ms-auto align-items-lg-center">
@@ -62,31 +66,53 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-warning"
+                            <li class="nav-item dropdown ms-lg-2">
+                                <a class="nav-link dropdown-toggle text-warning fw-semibold"
                                    href="#"
                                    id="contaDropdown"
                                    role="button"
                                    data-bs-toggle="dropdown"
                                    aria-expanded="false">
-                                    👤 @usuarioNome
+                                    <i class="bi bi-person-circle"></i> @usuarioNome
                                 </a>
+
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="contaDropdown">
                                     <li>
                                         <a class="dropdown-item" asp-controller="Account" asp-action="Configuracoes">
-                                            Configurações
+                                            <i class="bi bi-gear-fill"></i> Configurações
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
                                         <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
-                                            Sair
+                                            <i class="bi bi-box-arrow-right"></i> Sair
                                         </a>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
                     }
+                    else
+                    {
+                        <ul class="navbar-nav ms-auto align-items-lg-center">
+                            <li class="nav-item me-lg-2 mb-2 mb-lg-0">
+                                <a class="btn btn-light rounded-pill px-4 fw-semibold"
+                                   asp-controller="Account"
+                                   asp-action="Login">
+                                    Entrar
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light rounded-pill px-4 fw-semibold"
+                                   asp-controller="Account"
+                                   asp-action="Register">
+                                    Cadastre-se
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
                 </div>
             </div>
         </nav>
