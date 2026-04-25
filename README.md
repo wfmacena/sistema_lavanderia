@@ -62,3 +62,5 @@ cd sistema_lavanderia
 dotnet restore
 dotnet ef database update
 dotnet run
+
+
