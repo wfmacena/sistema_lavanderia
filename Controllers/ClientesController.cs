@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaLavanderia.Data;
 using SistemaLavanderia.Models;
@@ -78,11 +78,27 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente != null)
+            try
             {
-                _context.Clientes.Remove(cliente);
-                await _context.SaveChangesAsync();
+                var cliente = await _context.Clientes.FindAsync(id);
+                if (cliente != null)
+                {
+                    // Verifica se o cliente tem pedidos antes de excluir
+                    var temPedidos = await _context.Pedidos.AnyAsync(p => p.ClienteId == id);
+                    if (temPedidos)
+                    {
+                        TempData["Erro"] = "Não é possível excluir este cliente pois ele possui pedidos registrados. Tente desativar o usuário vinculado em vez de excluir.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    _context.Clientes.Remove(cliente);
+                    await _context.SaveChangesAsync();
+                    TempData["Sucesso"] = "Cliente excluído com sucesso!";
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Erro"] = "Ocorreu um erro ao tentar excluir o cliente. Verifique se existem dependências.";
             }
 
             return RedirectToAction(nameof(Index));
