@@ -169,9 +169,9 @@ namespace SistemaLavanderia.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ViewBag.Erro = "Ocorreu um erro ao tentar realizar o login. Tente novamente mais tarde.";
+                ViewBag.Erro = $"Erro técnico: {ex.Message} {(ex.InnerException != null ? " | Inner: " + ex.InnerException.Message : "")}";
                 return View(model);
             }
         }
