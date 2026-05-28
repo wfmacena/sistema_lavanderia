@@ -50,92 +50,63 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<LavanderiaContext>();
-    var logger = services.GetRequiredService<ILogger<Program>>();
 
     try 
     {
-        Console.WriteLine("Iniciando migração do banco de dados...");
-        context.Database.Migrate();
-        Console.WriteLine("Banco de dados migrado com sucesso.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Erro na migração: {ex.Message}");
-        if (ex.InnerException != null) Console.WriteLine($"Inner: {ex.InnerException.Message}");
-        
-        try {
-            if (context.Database.EnsureCreated()) {
-                Console.WriteLine("Banco de dados criado via EnsureCreated.");
-            }
-        } catch (Exception ex2) {
-            Console.WriteLine($"Erro fatal ao criar banco: {ex2.Message}");
-        }
-    }
+        // O EnsureCreated cria o banco e TODAS as tabelas se o arquivo .db não existir.
+        // É a forma mais simples e direta de funcionar no Render com SQLite.
+        // Nota: Isso ignora as Migrations, mas garante que as tabelas do modelo atual existam.
+        context.Database.EnsureCreated();
+        Console.WriteLine("Banco de dados verificado/criado com sucesso.");
 
-    // Tentar semear dados com tratamento de erro específico para tabela inexistente
-    try 
-    {
-        bool tabelasExistem = true;
-        try {
-            _ = context.Usuarios.Any();
-        } catch {
-            tabelasExistem = false;
-            Console.WriteLine("Aviso: Tabela Usuarios não encontrada ao tentar semear.");
-        }
-
-        if (tabelasExistem)
+        // Verifica se existem usuários, se não, adiciona os padrões
+        if (!context.Usuarios.Any())
         {
-            if (!context.Usuarios.Any())
+            Console.WriteLine("Semeando usuários padrões...");
+            context.Usuarios.Add(new SistemaLavanderia.Models.Usuario
             {
-                Console.WriteLine("Semeando usuários padrões...");
-                context.Usuarios.Add(new SistemaLavanderia.Models.Usuario
-                {
-                    Nome = "Administrador",
-                    Login = "admin",
-                    Senha = "1234",
-                    Perfil = "Administrador",
-                    Cpf = "000.000.000-00",
-                    Email = "admin@lavanderia.com",
-                    Telefone = "11999999999"
-                });
+                Nome = "Administrador",
+                Login = "admin",
+                Senha = "1234",
+                Perfil = "Administrador",
+                Cpf = "000.000.000-00",
+                Email = "admin@lavanderia.com",
+                Telefone = "11999999999"
+            });
 
-                context.Usuarios.Add(new SistemaLavanderia.Models.Usuario
-                {
-                    Nome = "Usuário Comum",
-                    Login = "usuario",
-                    Senha = "1234",
-                    Perfil = "Usuario",
-                    Cpf = "111.111.111-11",
-                    Email = "usuario@lavanderia.com",
-                    Telefone = "11888888888"
-                });
-
-                context.SaveChanges();
-                Console.WriteLine("Usuários semeados.");
-            }
-
-            if (!context.Servicos.Any())
+            context.Usuarios.Add(new SistemaLavanderia.Models.Usuario
             {
-                Console.WriteLine("Semeando serviços padrões...");
-                context.Servicos.AddRange(new List<SistemaLavanderia.Models.Servico>
-                {
-                    new SistemaLavanderia.Models.Servico { Nome = "Camisa", Descricao = "Lavagem e passadoria de camisa social", PrecoBase = 12.00m, UnidadeMedida = "Peça", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Calça", Descricao = "Lavagem e passadoria de calça jeans ou sarja", PrecoBase = 15.00m, UnidadeMedida = "Peça", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Vestido", Descricao = "Lavagem de vestido simples", PrecoBase = 25.00m, UnidadeMedida = "Peça", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Terno", Descricao = "Lavagem a seco de terno completo (Paletó + Calça)", PrecoBase = 45.00m, UnidadeMedida = "Peça", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Edredom Casal", Descricao = "Lavagem profunda de edredom de casal", PrecoBase = 35.00m, UnidadeMedida = "Peça", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Lavagem por Quilo", Descricao = "Roupas do dia a dia (mínimo 5kg)", PrecoBase = 15.00m, UnidadeMedida = "Kg", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Tênis", Descricao = "Lavagem e higienização de calçados esportivos", PrecoBase = 20.00m, UnidadeMedida = "Par", Ativo = true },
-                    new SistemaLavanderia.Models.Servico { Nome = "Cortina", Descricao = "Lavagem de cortina (preço por metro quadrado)", PrecoBase = 18.00m, UnidadeMedida = "M²", Ativo = true }
-                });
-                context.SaveChanges();
-                Console.WriteLine("Serviços semeados.");
-            }
+                Nome = "Usuário Comum",
+                Login = "usuario",
+                Senha = "1234",
+                Perfil = "Usuario",
+                Cpf = "111.111.111-11",
+                Email = "usuario@lavanderia.com",
+                Telefone = "11888888888"
+            });
+
+            context.SaveChanges();
+        }
+
+        if (!context.Servicos.Any())
+        {
+            context.Servicos.AddRange(new List<SistemaLavanderia.Models.Servico>
+            {
+                new SistemaLavanderia.Models.Servico { Nome = "Camisa", Descricao = "Lavagem e passadoria de camisa social", PrecoBase = 12.00m, UnidadeMedida = "Peça", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Calça", Descricao = "Lavagem e passadoria de calça jeans ou sarja", PrecoBase = 15.00m, UnidadeMedida = "Peça", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Vestido", Descricao = "Lavagem de vestido simples", PrecoBase = 25.00m, UnidadeMedida = "Peça", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Terno", Descricao = "Lavagem a seco de terno completo (Paletó + Calça)", PrecoBase = 45.00m, UnidadeMedida = "Peça", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Edredom Casal", Descricao = "Lavagem profunda de edredom de casal", PrecoBase = 35.00m, UnidadeMedida = "Peça", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Lavagem por Quilo", Descricao = "Roupas do dia a dia (mínimo 5kg)", PrecoBase = 15.00m, UnidadeMedida = "Kg", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Tênis", Descricao = "Lavagem e higienização de calçados esportivos", PrecoBase = 20.00m, UnidadeMedida = "Par", Ativo = true },
+                new SistemaLavanderia.Models.Servico { Nome = "Cortina", Descricao = "Lavagem de cortina (preço por metro quadrado)", PrecoBase = 18.00m, UnidadeMedida = "M²", Ativo = true }
+            });
+            context.SaveChanges();
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Erro crítico no Seed: {ex.Message}");
+        Console.WriteLine($"Erro ao inicializar banco: {ex.Message}");
     }
 }
 
