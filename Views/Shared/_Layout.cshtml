@@ -50,9 +50,9 @@
                             </button>
                         </li>
                         <li class="nav-item ms-2 d-flex gap-1">
-                            <a href="#" class="lang-btn" onclick="translatePage('pt')">PT</a>
-                            <a href="#" class="lang-btn" onclick="translatePage('en')">EN</a>
-                            <a href="#" class="lang-btn" onclick="translatePage('es')">ES</a>
+                            <a href="javascript:void(0)" class="lang-btn" onclick="translatePage('pt')">PT</a>
+                            <a href="javascript:void(0)" class="lang-btn" onclick="translatePage('en')">EN</a>
+                            <a href="javascript:void(0)" class="lang-btn" onclick="translatePage('es')">ES</a>
                         </li>
                     </ul>
 
@@ -60,17 +60,18 @@
                     {
                         <ul class="navbar-nav ms-auto align-items-lg-center">
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Início</a>
+                                <a class="nav-link text-white" asp-controller="Home" asp-action="Index" data-i18n="nav-home">Início</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Servicos" asp-action="Index">Serviços</a>
+                                <a class="nav-link text-white" asp-controller="Servicos" asp-action="Index" data-i18n="nav-services">Serviços</a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link text-white"
                                    asp-controller="Pedidos"
-                                   asp-action="Create">
+                                   asp-action="Create"
+                                   data-i18n="nav-request">
                                     Solicitar Serviços
                                 </a>
                             </li>
@@ -78,12 +79,12 @@
                             @if (usuarioPerfil == "Administrador")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                                    <a class="nav-link text-white" asp-controller="Clientes" asp-action="Index" data-i18n="nav-clients">Clientes</a>
                                 </li>
                             }
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Pedidos" asp-action="Index">
+                                <a class="nav-link text-white" asp-controller="Pedidos" asp-action="Index" data-i18n="nav-orders">
                                     @(usuarioPerfil == "Administrador" ? "Pedidos" : "Minhas Solicitações")
                                 </a>
                             </li>
@@ -188,10 +189,54 @@
             if(iconMobile) iconMobile.className = `bi ${iconClass}`;
         }
 
-        // Função de Tradução 100% Funcional (Simulada via UI)
+        // Dicionário de Traduções
+        const translations = {
+            'pt': {
+                'nav-home': 'Início',
+                'nav-services': 'Serviços',
+                'nav-request': 'Solicitar Serviços',
+                'nav-clients': 'Clientes',
+                'nav-orders': 'Pedidos',
+                'welcome-title': 'Lavanderia Clean T-Shirt',
+                'welcome-subtitle': 'Simplifique seu negócio com nossa plataforma inteligente.',
+                'btn-start': 'Começar Agora',
+                'btn-create-acc': 'Criar Conta Grátis'
+            },
+            'en': {
+                'nav-home': 'Home',
+                'nav-services': 'Services',
+                'nav-request': 'Request Service',
+                'nav-clients': 'Customers',
+                'nav-orders': 'Orders',
+                'welcome-title': 'Clean T-Shirt Laundry',
+                'welcome-subtitle': 'Simplify your business with our smart platform.',
+                'btn-start': 'Get Started',
+                'btn-create-acc': 'Create Free Account'
+            },
+            'es': {
+                'nav-home': 'Inicio',
+                'nav-services': 'Servicios',
+                'nav-request': 'Solicitar Servicio',
+                'nav-clients': 'Clientes',
+                'nav-orders': 'Pedidos',
+                'welcome-title': 'Lavandería Clean T-Shirt',
+                'welcome-subtitle': 'Simplifique su negocio con nuestra plataforma inteligente.',
+                'btn-start': 'Empezar Ahora',
+                'btn-create-acc': 'Crear Cuenta Gratis'
+            }
+        };
+
         function translatePage(lang) {
             localStorage.setItem('language', lang);
             
+            // Atualiza os textos marcados com data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+
             // Atualiza visualmente os botões
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 if(btn.innerText.toLowerCase() === lang) {
@@ -204,10 +249,6 @@
                     btn.style.color = 'white';
                 }
             });
-
-            // Aqui você pode adicionar lógica para traduzir elementos específicos via JS
-            // ou recarregar a página com o parâmetro de cultura do .NET
-            // console.log(`Sistema operando em: ${lang}`);
         }
 
         // Inicializar idioma e tema ao carregar
