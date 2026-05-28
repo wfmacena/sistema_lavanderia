@@ -252,11 +252,11 @@ node_modules/
 # =========================
 # SQLITE / BANCO LOCAL
 # =========================
-*.db
-*.db-shm
-*.db-wal
-*.sqlite
-*.sqlite3
+# *.db
+# *.db-shm
+# *.db-wal
+# *.sqlite
+# *.sqlite3
 
 # =========================
 # PASTAS DE BUILD
