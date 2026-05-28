@@ -20,6 +20,12 @@ namespace SistemaLavanderia.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configuração para PostgreSQL usar Identity nas chaves primárias
+            if (Database.IsNpgsql())
+            {
+                modelBuilder.UseIdentityByDefaultColumns();
+            }
+
             modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Cliente)
                 .WithMany()

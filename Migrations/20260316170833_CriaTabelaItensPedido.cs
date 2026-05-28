@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,8 +14,9 @@ namespace SistemaLavanderia.Migrations
                 name: "ItensPedido",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
+                        .Annotation("Npgsql:ValueGenerationStrategy", Npgsql.EntityFrameworkCore.PostgreSQL.Metadata.NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PedidoId = table.Column<int>(type: "INTEGER", nullable: false),
                     TipoPeca = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Quantidade = table.Column<int>(type: "INTEGER", nullable: false),
