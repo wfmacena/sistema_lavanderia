@@ -253,8 +253,8 @@ node_modules/
 # SQLITE / BANCO LOCAL
 # =========================
 # *.db
-# *.db-shm
-# *.db-wal
+*.db-shm
+*.db-wal
 # *.sqlite
 # *.sqlite3
 

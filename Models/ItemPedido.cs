@@ -18,8 +18,10 @@ namespace SistemaLavanderia.Models
         [Range(1, 100)]
         public int Quantidade { get; set; }
 
+        [Column(TypeName = "decimal(10,2)")]
         public decimal ValorUnitario { get; set; }
 
+        [Column(TypeName = "decimal(10,2)")]
         public decimal Subtotal { get; set; }
 
         public Pedido? Pedido { get; set; }

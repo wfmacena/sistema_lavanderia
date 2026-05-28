@@ -11,37 +11,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddDbContext<LavanderiaContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-
-    if (!string.IsNullOrEmpty(databaseUrl))
-    {
-        // Se houver DATABASE_URL (Render), usa PostgreSQL
-        options.UseNpgsql(ParseDatabaseUrl(databaseUrl), npgsqlOptions =>
-        {
-            // Força o comportamento de tipos legados se necessário ou garante compatibilidade
-            npgsqlOptions.EnableRetryOnFailure();
-        });
-    }
-    else
-    {
-        // Caso contrário, usa SQLite local
-        options.UseSqlite(connectionString);
-    }
-});
-
-// Helper para converter DATABASE_URL do Render para formato Npgsql
-string ParseDatabaseUrl(string url)
-{
-    var uri = new Uri(url);
-    var db = uri.AbsolutePath.Trim('/');
-    var user = uri.UserInfo.Split(':')[0];
-    var passwd = uri.UserInfo.Split(':')[1];
-    var port = uri.Port > 0 ? uri.Port : 5432;
-    var connStr = $"Server={uri.Host};Database={db};User Id={user};Password={passwd};Port={port};SSL Mode=Require;Trust Server Certificate=True;";
-    return connStr;
-}
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();

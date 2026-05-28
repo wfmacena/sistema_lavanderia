@@ -20,30 +20,6 @@ namespace SistemaLavanderia.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Versão de Correção: Força o uso de Identity Always para PostgreSQL
-            if (Database.IsNpgsql())
-            {
-                modelBuilder.UseIdentityAlwaysColumns();
-            }
-
-            // Mapeamento explícito para PostgreSQL lidar com tipos numéricos e booleanos
-            modelBuilder.Entity<Servico>(entity =>
-            {
-                entity.Property(e => e.PrecoBase).HasColumnType("numeric(18,2)");
-                entity.Property(e => e.Ativo).HasColumnType("boolean");
-            });
-
-            modelBuilder.Entity<ItemPedido>(entity =>
-            {
-                entity.Property(e => e.ValorUnitario).HasColumnType("numeric(18,2)");
-                entity.Property(e => e.Subtotal).HasColumnType("numeric(18,2)");
-            });
-
-            modelBuilder.Entity<Pedido>(entity =>
-            {
-                entity.Property(e => e.Valor).HasColumnType("numeric(18,2)");
-            });
-
             modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Cliente)
                 .WithMany()
