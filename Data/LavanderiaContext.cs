@@ -20,10 +20,10 @@ namespace SistemaLavanderia.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração para PostgreSQL usar Identity nas chaves primárias
+            // Versão de Correção: Força o uso de Identity Always para PostgreSQL
             if (Database.IsNpgsql())
             {
-                modelBuilder.UseIdentityByDefaultColumns();
+                modelBuilder.UseIdentityAlwaysColumns();
             }
 
             // Mapeamento explícito para PostgreSQL lidar com tipos numéricos e booleanos
