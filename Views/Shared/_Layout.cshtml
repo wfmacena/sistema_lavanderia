@@ -124,24 +124,15 @@
                     {
                         <ul class="navbar-nav ms-auto align-items-lg-center">
                             <li class="nav-item">
-                                <a class="nav-link text-white me-2" href="https://wa.me/5511999999999?text=Olá,%20tenho%20dúvidas%20sobre%20a%20lavanderia." target="_blank">
-                                    <i class="bi bi-question-circle"></i> Ajuda
+                                <a class="nav-link text-white me-2" href="https://wa.me/5511999999999" target="_blank">
+                                    <i class="bi bi-question-circle"></i> <span data-i18n="nav-help">Ajuda</span>
                                 </a>
                             </li>
                             <li class="nav-item me-lg-2 mb-2 mb-lg-0">
-                                <a class="btn btn-light rounded-pill px-4 fw-semibold"
-                                   asp-controller="Account"
-                                   asp-action="Login">
-                                    Entrar
-                                </a>
+                                <a class="btn btn-outline-light w-100 rounded-pill px-4" asp-controller="Account" asp-action="Login" data-i18n="nav-login">Entrar</a>
                             </li>
-
                             <li class="nav-item">
-                                <a class="btn btn-outline-light rounded-pill px-4 fw-semibold"
-                                   asp-controller="Account"
-                                   asp-action="Register">
-                                    Cadastre-se
-                                </a>
+                                <a class="btn btn-light w-100 rounded-pill px-4 text-primary fw-bold" asp-controller="Account" asp-action="Register" data-i18n="nav-register">Cadastre-se</a>
                             </li>
                         </ul>
                     }
@@ -192,38 +183,92 @@
         // Dicionário de Traduções
         const translations = {
             'pt': {
-                'nav-home': 'Início',
-                'nav-services': 'Serviços',
-                'nav-request': 'Solicitar Serviços',
-                'nav-clients': 'Clientes',
-                'nav-orders': 'Pedidos',
-                'welcome-title': 'Lavanderia Clean T-Shirt',
-                'welcome-subtitle': 'Simplifique seu negócio com nossa plataforma inteligente.',
-                'btn-start': 'Começar Agora',
-                'btn-create-acc': 'Criar Conta Grátis'
-            },
-            'en': {
-                'nav-home': 'Home',
-                'nav-services': 'Services',
-                'nav-request': 'Request Service',
-                'nav-clients': 'Customers',
-                'nav-orders': 'Orders',
-                'welcome-title': 'Clean T-Shirt Laundry',
-                'welcome-subtitle': 'Simplify your business with our smart platform.',
-                'btn-start': 'Get Started',
-                'btn-create-acc': 'Create Free Account'
-            },
-            'es': {
-                'nav-home': 'Inicio',
-                'nav-services': 'Servicios',
-                'nav-request': 'Solicitar Servicio',
-                'nav-clients': 'Clientes',
-                'nav-orders': 'Pedidos',
-                'welcome-title': 'Lavandería Clean T-Shirt',
-                'welcome-subtitle': 'Simplifique su negocio con nuestra plataforma inteligente.',
-                'btn-start': 'Empezar Ahora',
-                'btn-create-acc': 'Crear Cuenta Gratis'
-            }
+                 'nav-home': 'Início',
+                 'nav-services': 'Serviços',
+                 'nav-request': 'Solicitar Serviços',
+                 'nav-clients': 'Clientes',
+                 'nav-orders': 'Pedidos',
+                 'nav-help': 'Ajuda',
+                 'nav-login': 'Entrar',
+                 'nav-register': 'Cadastre-se',
+                 'hero-badge': 'A Melhor Gestão para sua Lavanderia',
+                 'welcome-title': 'Lavanderia Clean T-Shirt',
+                 'welcome-subtitle': 'Simplifique seu negócio com nossa plataforma inteligente. Controle total de pedidos, clientes e serviços em um só lugar.',
+                 'btn-start': 'Começar Agora',
+                 'btn-create-acc': 'Criar Conta Grátis',
+                 'feat-1-title': 'Rapidez e Eficiência',
+                 'feat-1-desc': 'Cadastre pedidos em segundos e acompanhe o status em tempo real.',
+                 'feat-2-title': 'Segurança Total',
+                 'feat-2-desc': 'Seus dados e de seus clientes protegidos com a melhor tecnologia.',
+                 'feat-3-title': 'Visão do Negócio',
+                 'feat-3-desc': 'Relatórios detalhados para você tomar as melhores decisões.',
+                 'stat-clients': 'Clientes',
+                 'stat-orders': 'Pedidos',
+                 'stat-satisfaction': 'Satisfação',
+                 'stat-support': 'Suporte',
+                 'cta-title': 'Pronto para transformar sua lavanderia?',
+                 'cta-desc': 'Junte-se a centenas de empreendedores que já profissionalizaram seu atendimento com a Clean T-Shirt.',
+                 'cta-btn-start': 'Começar Agora Gratuitamente',
+                 'cta-btn-support': 'Falar com Suporte'
+             },
+             'en': {
+                 'nav-home': 'Home',
+                 'nav-services': 'Services',
+                 'nav-request': 'Request Service',
+                 'nav-clients': 'Customers',
+                 'nav-orders': 'Orders',
+                 'nav-help': 'Help',
+                 'nav-login': 'Login',
+                 'nav-register': 'Sign Up',
+                 'hero-badge': 'The Best Management for your Laundry',
+                 'welcome-title': 'Clean T-Shirt Laundry',
+                 'welcome-subtitle': 'Simplify your business with our smart platform. Full control of orders, customers, and services in one place.',
+                 'btn-start': 'Get Started',
+                 'btn-create-acc': 'Create Free Account',
+                 'feat-1-title': 'Speed and Efficiency',
+                 'feat-1-desc': 'Register orders in seconds and track status in real-time.',
+                 'feat-2-title': 'Total Security',
+                 'feat-2-desc': 'Your data and your customers protected with the best technology.',
+                 'feat-3-title': 'Business Vision',
+                 'feat-3-desc': 'Detailed reports for you to make the best decisions.',
+                 'stat-clients': 'Customers',
+                 'stat-orders': 'Orders',
+                 'stat-satisfaction': 'Satisfaction',
+                 'stat-support': 'Support',
+                 'cta-title': 'Ready to transform your laundry?',
+                 'cta-desc': 'Join hundreds of entrepreneurs who have already professionalized their service with Clean T-Shirt.',
+                 'cta-btn-start': 'Start Now For Free',
+                 'cta-btn-support': 'Talk to Support'
+             },
+             'es': {
+                 'nav-home': 'Inicio',
+                 'nav-services': 'Servicios',
+                 'nav-request': 'Solicitar Servicio',
+                 'nav-clients': 'Clientes',
+                 'nav-orders': 'Pedidos',
+                 'nav-help': 'Ayuda',
+                 'nav-login': 'Entrar',
+                 'nav-register': 'Registrarse',
+                 'hero-badge': 'La Mejor Gestión para su Lavandería',
+                 'welcome-title': 'Lavandería Clean T-Shirt',
+                 'welcome-subtitle': 'Simplifique su negocio con nuestra plataforma inteligente. Control total de pedidos, clientes y servicios en un solo lugar.',
+                 'btn-start': 'Empezar Ahora',
+                 'btn-create-acc': 'Crear Cuenta Gratis',
+                 'feat-1-title': 'Rapidez y Eficiencia',
+                 'feat-1-desc': 'Registre pedidos en segundos y siga el estado en tiempo real.',
+                 'feat-2-title': 'Seguridad Total',
+                 'feat-2-desc': 'Sus datos y los de sus clientes protegidos con la mejor tecnología.',
+                 'feat-3-title': 'Visión del Negocio',
+                 'feat-3-desc': 'Informes detallados para que tome las mejores decisiones.',
+                 'stat-clients': 'Clientes',
+                 'stat-orders': 'Pedidos',
+                 'stat-satisfaction': 'Satisfacción',
+                 'stat-support': 'Soporte',
+                 'cta-title': '¿Listo para transformar su lavandería?',
+                 'cta-desc': 'Únase a cientos de emprendedores que ya han profesionalizado su servicio con Clean T-Shirt.',
+                 'cta-btn-start': 'Empezar Ahora Gratis',
+                 'cta-btn-support': 'Hablar con Soporte'
+             }
         };
 
         function translatePage(lang) {
