@@ -140,7 +140,7 @@
                         @foreach (var s in servicos)
                         {
                             <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3"
-                                    onclick="adicionarItem(@s.Id, '@s.Nome', @s.PrecoBase.ToString().Replace(",", "."))">
+                                    onclick="adicionarItem(@s.Id, '@s.Nome', @s.PrecoBase.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))">
                                 <div>
                                     <span class="fw-bold">@s.Nome</span>
                                     <div class="small text-muted">@s.Descricao</div>
@@ -174,6 +174,18 @@
                 return;
             }
 
+            // Pega o multiplicador baseado no tipo de lavagem
+            const tipoLavagem = document.getElementById('TipoLavagem').value;
+            let multiplicador = 1.0;
+            
+            switch(tipoLavagem) {
+                case 'Delicada': multiplicador = 1.25; break; // +25%
+                case 'A Seco': multiplicador = 1.5; break;    // +50%
+                case 'Premium': multiplicador = 2.0; break;   // +100%
+            }
+
+            const precoFinal = preco * multiplicador;
+
             const tr = document.createElement('tr');
             tr.className = 'item-row fade-in';
             tr.setAttribute('data-servico-id', id);
@@ -194,11 +206,11 @@
                     </div>
                 </td>
                 <td class="text-end">
-                    <span class="text-muted small">R$ ${preco.toFixed(2)}</span>
-                    <input type="hidden" class="item-preco" name="Itens[${itemCount}].PrecoUnitario" value="${preco}" />
+                    <span class="text-muted small">R$ ${precoFinal.toFixed(2)}</span>
+                    <input type="hidden" class="item-preco" name="Itens[${itemCount}].PrecoUnitario" value="${precoFinal}" />
                 </td>
                 <td class="text-end">
-                    <span class="fw-bold text-primary subtotal">R$ ${preco.toFixed(2)}</span>
+                    <span class="fw-bold text-primary subtotal">R$ ${precoFinal.toFixed(2)}</span>
                 </td>
                 <td>
                     <button type="button" class="btn btn-link text-danger p-0" onclick="removerItem(this)">
@@ -214,6 +226,16 @@
             // Fecha o modal
             bootstrap.Modal.getInstance(document.getElementById('modalServicos')).hide();
         }
+
+        // Atualiza os preços se o usuário mudar o tipo de lavagem após já ter itens na lista
+        document.getElementById('TipoLavagem').addEventListener('change', function() {
+            // Opcional: Avisar o usuário ou recalcular tudo
+            // Para ser simples, vamos limpar a lista ou apenas atualizar os subtotais dos itens existentes
+            const itens = document.querySelectorAll('.item-row');
+            if (itens.length > 0) {
+                alert("O tipo de lavagem foi alterado. Para aplicar os novos preços aos itens já adicionados, remova-os e adicione novamente.");
+            }
+        });
 
         function mudarQtd(btn, delta) {
             const input = btn.parentElement.querySelector('.item-qtd');
