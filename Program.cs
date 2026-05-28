@@ -13,7 +13,14 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddDbContext<LavanderiaContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".SistemaLavanderia.Session";
+});
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

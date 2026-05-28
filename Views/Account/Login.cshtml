@@ -16,7 +16,7 @@
 
         @if (TempData["Sucesso"] != null)
         {
-            <div class="alert alert-success mb-4 d-flex align-items-center">
+            <div class="alert alert-success mb-4 d-flex align-items-center fade show">
                 <i class="bi bi-check-circle-fill me-2"></i>
                 <div>@TempData["Sucesso"]</div>
             </div>
@@ -24,11 +24,13 @@
 
         @if (ViewBag.Erro != null)
         {
-            <div class="alert alert-danger mb-4 d-flex align-items-center">
+            <div class="alert alert-danger mb-4 d-flex align-items-center fade show">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <div>@ViewBag.Erro</div>
             </div>
         }
+
+        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
         <form asp-action="Login" method="post">
             <div class="form-floating mb-3">

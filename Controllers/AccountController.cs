@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SistemaLavanderia.Data;
 using SistemaLavanderia.Models;
 
@@ -137,32 +137,43 @@ namespace SistemaLavanderia.Controllers
         public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            var usuario = _context.Usuarios
-                .FirstOrDefault(u => u.Login == model.Login && u.Senha == model.Senha);
-
-            if (usuario == null)
             {
-                ViewBag.Erro = "Login ou senha inválidos.";
+                ViewBag.Erro = "Preencha todos os campos corretamente.";
                 return View(model);
             }
 
-            HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
-            HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
-            HttpContext.Session.SetString("UsuarioPerfil", usuario.Perfil);
-            HttpContext.Session.SetString("UsuarioLogin", usuario.Login);
-
-            if (usuario.ClienteId.HasValue)
+            try
             {
-                HttpContext.Session.SetString("ClienteId", usuario.ClienteId.Value.ToString());
-            }
-            else
-            {
-                HttpContext.Session.Remove("ClienteId");
-            }
+                var usuario = _context.Usuarios
+                    .FirstOrDefault(u => u.Login == model.Login && u.Senha == model.Senha);
 
-            return RedirectToAction("Index", "Home");
+                if (usuario == null)
+                {
+                    ViewBag.Erro = "Login ou senha inválidos.";
+                    return View(model);
+                }
+
+                HttpContext.Session.SetString("UsuarioId", usuario.Id.ToString());
+                HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
+                HttpContext.Session.SetString("UsuarioPerfil", usuario.Perfil);
+                HttpContext.Session.SetString("UsuarioLogin", usuario.Login);
+
+                if (usuario.ClienteId.HasValue)
+                {
+                    HttpContext.Session.SetString("ClienteId", usuario.ClienteId.Value.ToString());
+                }
+                else
+                {
+                    HttpContext.Session.Remove("ClienteId");
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception)
+            {
+                ViewBag.Erro = "Ocorreu um erro ao tentar realizar o login. Tente novamente mais tarde.";
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -179,66 +190,77 @@ namespace SistemaLavanderia.Controllers
         public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            model.Cpf = SomenteNumeros(model.Cpf);
-            model.Telefone = SomenteNumeros(model.Telefone);
-
-            if (!CpfValido(model.Cpf))
             {
-                ViewBag.Erro = "CPF inválido.";
+                ViewBag.Erro = "Por favor, corrija os erros no formulário.";
                 return View(model);
             }
 
-            bool loginJaExiste = _context.Usuarios.Any(u => u.Login == model.Login);
-            if (loginJaExiste)
+            try
             {
-                ViewBag.Erro = "Já existe um usuário com esse login.";
+                model.Cpf = SomenteNumeros(model.Cpf ?? "");
+                model.Telefone = SomenteNumeros(model.Telefone ?? "");
+
+                if (!CpfValido(model.Cpf))
+                {
+                    ViewBag.Erro = "CPF inválido.";
+                    return View(model);
+                }
+
+                bool loginJaExiste = _context.Usuarios.Any(u => u.Login == model.Login);
+                if (loginJaExiste)
+                {
+                    ViewBag.Erro = "Já existe um usuário com esse login.";
+                    return View(model);
+                }
+
+                bool emailJaExiste = _context.Usuarios.Any(u => u.Email == model.Email);
+                if (emailJaExiste)
+                {
+                    ViewBag.Erro = "Já existe um usuário com esse email.";
+                    return View(model);
+                }
+
+                bool cpfJaExiste = _context.Usuarios.Any(u => u.Cpf == model.Cpf);
+                if (cpfJaExiste)
+                {
+                    ViewBag.Erro = "Já existe um usuário com esse CPF.";
+                    return View(model);
+                }
+
+                var cliente = new Cliente
+                {
+                    Nome = model.Nome,
+                    Cpf = model.Cpf,
+                    Email = model.Email,
+                    Telefone = model.Telefone
+                };
+
+                _context.Clientes.Add(cliente);
+                _context.SaveChanges();
+
+                var usuario = new Usuario
+                {
+                    Nome = model.Nome,
+                    Login = model.Login,
+                    Cpf = model.Cpf,
+                    Email = model.Email,
+                    Telefone = model.Telefone,
+                    Senha = model.Senha,
+                    Perfil = "Usuario",
+                    ClienteId = cliente.Id
+                };
+
+                _context.Usuarios.Add(usuario);
+                _context.SaveChanges();
+
+                TempData["Sucesso"] = "Cadastro realizado com sucesso. Faça login para entrar.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Erro = "Erro ao criar conta: " + ex.Message;
                 return View(model);
             }
-
-            bool emailJaExiste = _context.Usuarios.Any(u => u.Email == model.Email);
-            if (emailJaExiste)
-            {
-                ViewBag.Erro = "Já existe um usuário com esse email.";
-                return View(model);
-            }
-
-            bool cpfJaExiste = _context.Usuarios.Any(u => u.Cpf == model.Cpf);
-            if (cpfJaExiste)
-            {
-                ViewBag.Erro = "Já existe um usuário com esse CPF.";
-                return View(model);
-            }
-
-            var cliente = new Cliente
-            {
-                Nome = model.Nome,
-                Cpf = model.Cpf,
-                Email = model.Email,
-                Telefone = model.Telefone
-            };
-
-            _context.Clientes.Add(cliente);
-            _context.SaveChanges();
-
-            var usuario = new Usuario
-            {
-                Nome = model.Nome,
-                Login = model.Login,
-                Cpf = model.Cpf,
-                Email = model.Email,
-                Telefone = model.Telefone,
-                Senha = model.Senha,
-                Perfil = "Usuario",
-                ClienteId = cliente.Id
-            };
-
-            _context.Usuarios.Add(usuario);
-            _context.SaveChanges();
-
-            TempData["Sucesso"] = "Cadastro realizado com sucesso. Faça login para entrar.";
-            return RedirectToAction("Login");
         }
 
         public IActionResult Logout()
