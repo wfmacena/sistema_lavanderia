@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SistemaLavanderia.Models;
 
 namespace SistemaLavanderia.Data
@@ -14,6 +14,7 @@ namespace SistemaLavanderia.Data
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<ItemPedido> ItensPedido { get; set; }
+        public DbSet<Servico> Servicos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,7 +40,7 @@ namespace SistemaLavanderia.Data
 
             modelBuilder.Entity<ItemPedido>()
                 .HasOne(i => i.Pedido)
-                .WithMany(p => p.Itens)
+                .WithMany(p => p.ItensPedido)
                 .HasForeignKey(i => i.PedidoId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

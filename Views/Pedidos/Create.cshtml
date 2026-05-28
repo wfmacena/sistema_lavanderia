@@ -1,289 +1,254 @@
-﻿@model SistemaLavanderia.Models.PedidoCreateViewModel
+@model SistemaLavanderia.Models.PedidoCreateViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    ViewData["Title"] = "Solicitar Serviço de Lavanderia";
+    ViewData["Title"] = "Nova Solicitação";
+    var servicos = ViewBag.Servicos as List<SistemaLavanderia.Models.Servico>;
+    var perfil = ViewBag.Perfil as string;
 }
 
-<div class="container mt-4 pedido-page">
-    <h1 class="pedido-title">Solicitar Serviço de Lavanderia</h1>
+<div class="container mt-4 fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-black mb-0"><i class="bi bi-plus-circle-fill text-primary me-2"></i>Nova Solicitação</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i> Voltar
+        </a>
+    </div>
 
     <form asp-action="Create" method="post" id="pedidoForm">
-        <input asp-for="ClienteId" type="hidden" />
-        <input asp-for="UsuarioId" type="hidden" />
-        <input asp-for="Status" type="hidden" />
-
-        <!-- campos ocultos que o JS vai preencher -->
-        <input asp-for="Camisa" type="hidden" id="hiddenCamisa" />
-        <input asp-for="Calca" type="hidden" id="hiddenCalca" />
-        <input asp-for="Jaqueta" type="hidden" id="hiddenJaqueta" />
-        <input asp-for="Toalha" type="hidden" id="hiddenToalha" />
-        <input asp-for="Lencol" type="hidden" id="hiddenLencol" />
-        <input asp-for="Cobertor" type="hidden" id="hiddenCobertor" />
-        <input asp-for="Edredom" type="hidden" id="hiddenEdredom" />
-        <input asp-for="Outros" type="hidden" id="hiddenOutros" />
-
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 shadow-sm mb-4"></div>
 
         <div class="row g-4">
-            <!-- COLUNA ESQUERDA -->
+            <!-- Informações do Cliente -->
             <div class="col-lg-8">
-                <div class="card custom-card mb-4">
-                    <div class="card-header custom-header-blue">
-                        <i class="bi bi-info-circle-fill"></i> Dados do Pedido
-                    </div>
-                    <div class="card-body">
-                        <div class="client-box mb-3">
-                            <strong><i class="bi bi-person-fill"></i> Cliente:</strong> @ViewBag.NomeClienteLogado
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="TipoLavagem" class="form-label fw-semibold">Tipo de Serviço</label>
-                                <select asp-for="TipoLavagem" class="form-select">
-                                    <option value="">Selecione o tipo de serviço</option>
-                                    <option value="Lavagem Simples">Lavagem Simples (água e sabão)</option>
-                                    <option value="Lavagem a Seco">Lavagem a Seco (produtos especiais)</option>
-                                    <option value="Passadoria">Passadoria (roupas passadas)</option>
-                                    <option value="Lavagem Pesada">Lavagem Pesada (roupas muito sujas)</option>
-                                    <option value="Tinturaria">Tinturaria (tingimento e restauração)</option>
+                <div class="card-modern p-4 mb-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="bi bi-person-fill text-primary me-2"></i>Informações do Cliente</h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="ClienteId" class="form-label fw-semibold">Cliente</label>
+                            @if (perfil == "Administrador")
+                            {
+                                <select asp-for="ClienteId" class="form-select form-control-modern" asp-items="ViewBag.ClienteId">
+                                    <option value="">Selecione o cliente...</option>
                                 </select>
-                                <span asp-validation-for="TipoLavagem" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label asp-for="DataEntrega" class="form-label fw-semibold">Data desejada para entrega</label>
-                                <input asp-for="DataEntrega" type="date" class="form-control" />
-                                <span asp-validation-for="DataEntrega" class="text-danger"></span>
-                            </div>
+                            }
+                            else
+                            {
+                                <select asp-for="ClienteId" class="form-select form-control-modern bg-light" asp-items="ViewBag.ClienteId" readonly>
+                                </select>
+                            }
+                            <span asp-validation-for="ClienteId" class="text-danger small"></span>
                         </div>
 
-                        <div class="itens-wrapper">
-                            <div class="itens-header">
-                                <i class="bi bi-tshirt"></i> Itens do Pedido
-                            </div>
-
-                            <div id="itensContainer" class="p-3"></div>
-
-                            <div class="px-3 pb-3">
-                                <button type="button" class="btn btn-success" id="btnAdicionarItem">
-                                    <i class="bi bi-plus-lg"></i> Adicionar Peça
-                                </button>
-                            </div>
+                        <div class="col-md-6">
+                            <label asp-for="TipoLavagem" class="form-label fw-semibold">Tipo de Lavagem</label>
+                            <select asp-for="TipoLavagem" class="form-select form-control-modern">
+                                <option value="Padrão">Padrão (Água e Sabão)</option>
+                                <option value="Delicada">Delicada / À Mão</option>
+                                <option value="A Seco">Lavagem a Seco Professional</option>
+                                <option value="Premium">Premium (Tratamento de Manchas)</option>
+                            </select>
+                            <span asp-validation-for="TipoLavagem" class="text-danger small"></span>
                         </div>
 
-                        <div class="resumo-wrapper mt-3">
-                            <div class="resumo-header">
-                                <i class="bi bi-receipt"></i> Resumo
-                            </div>
-                            <div class="resumo-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <strong>Valor Total:</strong>
-                                    <span id="valorTotal" class="valor-total">R$ 0,00</span>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label asp-for="DataEntrega" class="form-label fw-semibold">Previsão de Entrega</label>
+                            <input asp-for="DataEntrega" type="date" class="form-control form-control-modern" value="@DateTime.Today.AddDays(3).ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="DataEntrega" class="text-danger small"></span>
                         </div>
 
-                        <div class="mt-3">
-                            <label class="form-label fw-semibold">Observações</label>
-                            <textarea class="form-control" rows="3" placeholder="Observações adicionais..."></textarea>
-                        </div>
-
-                        <div class="mt-4 d-flex gap-2 flex-wrap">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle-fill"></i> Finalizar Pedido
-                            </button>
-
-                            <a asp-action="Index" class="btn btn-secondary btn-lg">
-                                <i class="bi bi-arrow-left"></i> Voltar
-                            </a>
+                        <div class="col-12">
+                            <label asp-for="Observacoes" class="form-label fw-semibold">Observações Especiais</label>
+                            <textarea asp-for="Observacoes" class="form-control form-control-modern" rows="2" placeholder="Ex: Mancha de café na gola, tecido frágil..."></textarea>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- COLUNA DIREITA -->
-            <div class="col-lg-4">
-                <div class="card custom-card mb-4">
-                    <div class="card-header custom-header-yellow">
-                        <i class="bi bi-clock-fill"></i> Prazos
-                    </div>
-                    <div class="card-body">
-                        <ul class="prazo-list">
-                            <li>✅ Lavagem Simples: 2 dias</li>
-                            <li>✅ Lavagem a Seco: 3 dias</li>
-                            <li>✅ Passadoria: 1 dia</li>
-                            <li>✅ Tinturaria: 5 dias</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card custom-card">
-                    <div class="card-header custom-header-cyan">
-                        <i class="bi bi-tag-fill"></i> Tabela de Preços
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-sm mb-0">
-                            <thead>
+                <!-- Seleção de Itens -->
+                <div class="card-modern p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="bi bi-cart-plus-fill text-primary me-2"></i>Seleção de Peças</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="tabelaItens">
+                            <thead class="bg-light">
                                 <tr>
-                                    <th>Peça</th>
-                                    <th>Simples</th>
-                                    <th>Seco</th>
+                                    <th>Peça / Serviço</th>
+                                    <th style="width: 150px;">Quantidade</th>
+                                    <th class="text-end">Preço Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th style="width: 50px;"></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr><td>Camisa</td><td>R$ 8</td><td>R$ 15</td></tr>
-                                <tr><td>Calça</td><td>R$ 10</td><td>R$ 18</td></tr>
-                                <tr><td>Vestido</td><td>R$ 15</td><td>R$ 25</td></tr>
+                            <tbody id="itensContainer">
+                                <!-- Itens adicionados aparecerão aqui -->
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalServicos">
+                            <i class="bi bi-plus-lg me-1"></i> Adicionar Peça
+                        </button>
+                        <div class="text-end">
+                            <p class="text-muted mb-0 small">Total de Peças: <span id="totalPecas" class="fw-bold">0</span></p>
+                            <h3 class="fw-black text-primary mb-0">Total: <span id="valorTotal">R$ 0,00</span></h3>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="d-none">
-            <input asp-for="DataEntrada" type="date" />
+            <!-- Coluna Lateral - Resumo/Dicas -->
+            <div class="col-lg-4">
+                <div class="card-modern p-4 mb-4 bg-primary text-white border-0 shadow-lg">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-lightning-fill me-2"></i>Dicas Clean T-Shirt</h5>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><i class="bi bi-check2-circle me-2"></i> Peças delicadas levam +2 dias.</li>
+                        <li class="mb-2"><i class="bi bi-check2-circle me-2"></i> Lavagem por KG é ideal para roupas do dia a dia.</li>
+                        <li class="mb-2"><i class="bi bi-check2-circle me-2"></i> Verifique sempre os bolsos antes de enviar!</li>
+                    </ul>
+                </div>
+
+                <div class="card-modern p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Finalizar</h5>
+                    <p class="small text-muted mb-4">Ao finalizar, seu pedido será registrado e entraremos em contato via WhatsApp para confirmar a retirada.</p>
+                    <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm mb-3">
+                        <i class="bi bi-check-lg me-1"></i> Confirmar Solicitação
+                    </button>
+                    <div class="alert alert-info py-2 px-3 small rounded-3 mb-0">
+                        <i class="bi bi-info-circle me-1"></i> O pagamento é realizado na entrega das roupas.
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>
 
+<!-- Modal de Serviços -->
+<div class="modal fade" id="modalServicos" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Escolha a Peça</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group list-group-flush">
+                    @if (servicos != null)
+                    {
+                        @foreach (var s in servicos)
+                        {
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3"
+                                    onclick="adicionarItem(@s.Id, '@s.Nome', @s.PrecoBase.ToString().Replace(",", "."))">
+                                <div>
+                                    <span class="fw-bold">@s.Nome</span>
+                                    <div class="small text-muted">@s.Descricao</div>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3">@s.PrecoBase.ToString("C")</span>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        const precos = {
-            "Camisa": 8.00,
-            "Calca": 10.00,
-            "Jaqueta": 18.00,
-            "Toalha": 6.00,
-            "Lencol": 12.00,
-            "Cobertor": 25.00,
-            "Edredom": 35.00,
-            "Outros": 10.00
-        };
+        let itemCount = 0;
 
-        const itensContainer = document.getElementById("itensContainer");
-        const btnAdicionarItem = document.getElementById("btnAdicionarItem");
-        const valorTotal = document.getElementById("valorTotal");
+        function adicionarItem(id, nome, preco) {
+            const container = document.getElementById('itensContainer');
+            
+            // Verifica se o item já existe na lista
+            const itemExistente = document.querySelector(`.item-row[data-servico-id="${id}"]`);
+            if (itemExistente) {
+                const input = itemExistente.querySelector('.item-qtd');
+                input.value = parseInt(input.value) + 1;
+                atualizarSubtotal(input);
+                bootstrap.Modal.getInstance(document.getElementById('modalServicos')).hide();
+                return;
+            }
 
-        function formatarMoeda(valor) {
-            return valor.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            });
-        }
-
-        function criarLinhaItem(tipo = "", quantidade = 1) {
-            const row = document.createElement("div");
-            row.className = "item-card";
-
-            row.innerHTML = `
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-5">
-                        <label class="form-label">Tipo de Roupa</label>
-                        <select class="form-select item-tipo">
-                            <option value="">Selecione...</option>
-                            <option value="Camisa">Camisa - R$ 8,00</option>
-                            <option value="Calca">Calça - R$ 10,00</option>
-                            <option value="Jaqueta">Jaqueta - R$ 18,00</option>
-                            <option value="Toalha">Toalha - R$ 6,00</option>
-                            <option value="Lencol">Lençol - R$ 12,00</option>
-                            <option value="Cobertor">Cobertor - R$ 25,00</option>
-                            <option value="Edredom">Edredom - R$ 35,00</option>
-                            <option value="Outros">Outros - R$ 10,00</option>
-                        </select>
+            const tr = document.createElement('tr');
+            tr.className = 'item-row fade-in';
+            tr.setAttribute('data-servico-id', id);
+            
+            tr.innerHTML = `
+                <td>
+                    <span class="fw-bold">${nome}</span>
+                    <input type="hidden" name="Itens[${itemCount}].ServicoId" value="${id}" />
+                    <input type="hidden" name="Itens[${itemCount}].NomeServico" value="${nome}" />
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <button class="btn btn-outline-secondary" type="button" onclick="mudarQtd(this, -1)">-</button>
+                        <input type="number" name="Itens[${itemCount}].Quantidade" 
+                               class="form-control text-center item-qtd" value="1" min="1" 
+                               onchange="atualizarSubtotal(this)" />
+                        <button class="btn btn-outline-secondary" type="button" onclick="mudarQtd(this, 1)">+</button>
                     </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label">Quantidade</label>
-                        <input type="number" class="form-control item-quantidade" min="1" value="${quantidade}">
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">Subtotal</label>
-                        <div class="subtotal-text">R$ 0,00</div>
-                    </div>
-
-                    <div class="col-md-2 text-end">
-                        <button type="button" class="btn btn-danger btn-remover">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </div>
-                </div>
+                </td>
+                <td class="text-end">
+                    <span class="text-muted small">R$ ${preco.toFixed(2)}</span>
+                    <input type="hidden" class="item-preco" name="Itens[${itemCount}].PrecoUnitario" value="${preco}" />
+                </td>
+                <td class="text-end">
+                    <span class="fw-bold text-primary subtotal">R$ ${preco.toFixed(2)}</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-link text-danger p-0" onclick="removerItem(this)">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </td>
             `;
 
-            const select = row.querySelector(".item-tipo");
-            const inputQtd = row.querySelector(".item-quantidade");
-            const subtotalText = row.querySelector(".subtotal-text");
-            const btnRemover = row.querySelector(".btn-remover");
-
-            if (tipo) {
-                select.value = tipo;
-            }
-
-            function atualizarSubtotal() {
-                const tipoSelecionado = select.value;
-                const qtd = parseInt(inputQtd.value) || 0;
-                const preco = precos[tipoSelecionado] || 0;
-                const subtotal = qtd * preco;
-                subtotalText.textContent = formatarMoeda(subtotal);
-                atualizarResumo();
-            }
-
-            select.addEventListener("change", atualizarSubtotal);
-            inputQtd.addEventListener("input", atualizarSubtotal);
-
-            btnRemover.addEventListener("click", function () {
-                row.remove();
-                atualizarResumo();
-            });
-
-            atualizarSubtotal();
-            itensContainer.appendChild(row);
+            container.appendChild(tr);
+            itemCount++;
+            atualizarTotal();
+            
+            // Fecha o modal
+            bootstrap.Modal.getInstance(document.getElementById('modalServicos')).hide();
         }
 
-        function atualizarResumo() {
-            const cards = document.querySelectorAll(".item-card");
+        function mudarQtd(btn, delta) {
+            const input = btn.parentElement.querySelector('.item-qtd');
+            let novaQtd = parseInt(input.value) + delta;
+            if (novaQtd < 1) novaQtd = 1;
+            input.value = novaQtd;
+            atualizarSubtotal(input);
+        }
 
+        function atualizarSubtotal(input) {
+            const row = input.closest('tr');
+            const preco = parseFloat(row.querySelector('.item-preco').value);
+            const qtd = parseInt(input.value);
+            const subtotal = preco * qtd;
+            row.querySelector('.subtotal').innerText = subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            atualizarTotal();
+        }
+
+        function removerItem(btn) {
+            btn.closest('tr').remove();
+            atualizarTotal();
+        }
+
+        function atualizarTotal() {
             let total = 0;
-            let totais = {
-                Camisa: 0,
-                Calca: 0,
-                Jaqueta: 0,
-                Toalha: 0,
-                Lencol: 0,
-                Cobertor: 0,
-                Edredom: 0,
-                Outros: 0
-            };
-
-            cards.forEach(card => {
-                const tipo = card.querySelector(".item-tipo").value;
-                const qtd = parseInt(card.querySelector(".item-quantidade").value) || 0;
-
-                if (tipo && totais.hasOwnProperty(tipo)) {
-                    totais[tipo] += qtd;
-                    total += qtd * (precos[tipo] || 0);
-                }
+            let totalPecas = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const preco = parseFloat(row.querySelector('.item-preco').value);
+                const qtd = parseInt(row.querySelector('.item-qtd').value);
+                total += preco * qtd;
+                totalPecas += qtd;
             });
 
-            valorTotal.textContent = formatarMoeda(total);
-
-            document.getElementById("hiddenCamisa").value = totais.Camisa;
-            document.getElementById("hiddenCalca").value = totais.Calca;
-            document.getElementById("hiddenJaqueta").value = totais.Jaqueta;
-            document.getElementById("hiddenToalha").value = totais.Toalha;
-            document.getElementById("hiddenLencol").value = totais.Lencol;
-            document.getElementById("hiddenCobertor").value = totais.Cobertor;
-            document.getElementById("hiddenEdredom").value = totais.Edredom;
-            document.getElementById("hiddenOutros").value = totais.Outros;
+            document.getElementById('valorTotal').innerText = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('totalPecas').innerText = totalPecas;
         }
-
-        btnAdicionarItem.addEventListener("click", function () {
-            criarLinhaItem();
-        });
-
     </script>
 }

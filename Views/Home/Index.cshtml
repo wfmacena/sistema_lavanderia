@@ -1,73 +1,131 @@
-﻿@using SistemaLavanderia.Models
+@model SistemaLavanderia.Models.DashboardViewModel
+@using SistemaLavanderia.Models
 @{
     var perfil = ViewBag.Perfil as string;
     var nome = ViewBag.Nome as string;
     var pedidosRecentes = ViewBag.PedidosRecentes as List<Pedido>;
     var meusPedidos = ViewBag.MeusPedidos as List<Pedido>;
+    var faturamentoTotal = ViewBag.FaturamentoTotal as decimal?;
 }
 
 <div class="dashboard-header mb-4">
-    <div>
-        <h1 class="dashboard-title">Olá, @nome 👋</h1>
-        <p class="dashboard-subtitle">
-            @if (perfil == "Administrador")
-            {
-                <span>Painel de controle da lavanderia.</span>
-            }
-            else
-            {
-                <span>Acompanhe suas solicitações e faça novos pedidos de lavagem.</span>
-            }
-        </p>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="dashboard-title">Olá, @nome 👋</h1>
+            <p class="dashboard-subtitle">
+                @if (perfil == "Administrador")
+                {
+                    <span>Painel de controle da lavanderia.</span>
+                }
+                else
+                {
+                    <span>Acompanhe suas solicitações e faça novos pedidos de lavagem.</span>
+                }
+            </p>
+        </div>
+        @if (perfil == "Administrador")
+        {
+            <div class="d-flex gap-3">
+                <div class="card-modern px-3 py-2 bg-success text-white border-0 shadow-sm text-center">
+                    <small class="opacity-75 d-block">Pago</small>
+                    <span class="fw-bold">@Model.FaturamentoPago.ToString("C")</span>
+                </div>
+                <div class="card-modern px-3 py-2 bg-warning text-dark border-0 shadow-sm text-center">
+                    <small class="opacity-75 d-block">Pendente</small>
+                    <span class="fw-bold">@Model.FaturamentoPendente.ToString("C")</span>
+                </div>
+            </div>
+        }
     </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+            <div class="text-primary fs-2 mb-1">📦</div>
+            <div class="fw-bold fs-4">@Model.TotalPedidos</div>
+            <div class="text-muted small">Total de Pedidos</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+            <div class="text-warning fs-2 mb-1">📥</div>
+            <div class="fw-bold fs-4">@Model.PedidosRecebidos</div>
+            <div class="text-muted small">Recebidos</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+            <div class="text-info fs-2 mb-1">🧼</div>
+            <div class="fw-bold fs-4">@Model.PedidosEmLavagem</div>
+            <div class="text-muted small">Em Processamento</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm text-center p-3 h-100">
+            <div class="text-success fs-2 mb-1">✅</div>
+            <div class="fw-bold fs-4">@Model.PedidosProntos</div>
+            <div class="text-muted small">Prontos</div>
+        </div>
+    </div>
+    @if (perfil == "Administrador")
+    {
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm text-center p-3 h-100">
+                <div class="text-danger fs-2 mb-1">👥</div>
+                <div class="fw-bold fs-4">@Model.TotalClientes</div>
+                <div class="text-muted small">Clientes</div>
+            </div>
+        </div>
+    }
 </div>
 
 @if (perfil == "Administrador")
 {
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="dashboard-card">
-                <div class="dashboard-card-icon bg-primary-subtle">📦</div>
+            <div class="dashboard-card h-100">
+                <div class="dashboard-card-icon bg-primary-subtle">📋</div>
                 <h5>Gerenciar pedidos</h5>
                 <p>Visualize, atualize status e finalize pedidos.</p>
-                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Abrir pedidos</a>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary mt-auto">Abrir pedidos</a>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="dashboard-card">
+            <div class="dashboard-card h-100">
                 <div class="dashboard-card-icon bg-success-subtle">👥</div>
                 <h5>Gerenciar clientes</h5>
                 <p>Cadastre, edite e acompanhe os clientes da lavanderia.</p>
-                <a asp-controller="Clientes" asp-action="Index" class="btn btn-dark">Abrir clientes</a>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-dark mt-auto">Abrir clientes</a>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="dashboard-card">
-                <div class="dashboard-card-icon bg-warning-subtle">➕</div>
-                <h5>Novo pedido</h5>
-                <p>Registre rapidamente uma nova solicitação de lavagem.</p>
-                <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Criar pedido</a>
+            <div class="dashboard-card h-100">
+                <div class="dashboard-card-icon bg-warning-subtle">✨</div>
+                <h5>Serviços</h5>
+                <p>Gerencie os tipos de lavagem e preços oferecidos.</p>
+                <a asp-controller="Servicos" asp-action="Index" class="btn btn-warning mt-auto text-white">Abrir serviços</a>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-section">
-        <div class="section-header">
-            <h3>Pedidos recentes</h3>
+    <div class="dashboard-section bg-white p-4 rounded shadow-sm">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h5 mb-0">Pedidos recentes</h3>
             <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-secondary btn-sm">Ver todos</a>
         </div>
 
         @if (pedidosRecentes != null && pedidosRecentes.Any())
         {
             <div class="table-responsive">
-                <table class="table table-striped table-hover shadow-sm">
-                    <thead>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
                             <th>Cliente</th>
                             <th>Tipo</th>
-                            <th>Quantidade</th>
+                            <th>Valor</th>
                             <th>Status</th>
                             <th>Entrada</th>
                         </tr>
@@ -76,10 +134,14 @@
                         @foreach (var pedido in pedidosRecentes)
                         {
                             <tr>
-                                <td>@pedido.Cliente?.Nome</td>
+                                <td class="fw-bold">@pedido.Cliente?.Nome</td>
                                 <td>@pedido.TipoLavagem</td>
-                                <td>@pedido.Quantidade</td>
-                                <td>@pedido.Status</td>
+                                <td>@pedido.Valor.ToString("C")</td>
+                                <td>
+                                    <span class="badge @(pedido.Status == "Entregue" ? "bg-success" : (pedido.Status == "Recebido" ? "bg-info" : "bg-warning text-dark"))">
+                                        @pedido.Status
+                                    </span>
+                                </td>
                                 <td>@pedido.DataEntrada.ToString("dd/MM/yyyy")</td>
                             </tr>
                         }
@@ -89,7 +151,7 @@
         }
         else
         {
-            <div class="empty-state">
+            <div class="text-center py-4 text-muted">
                 Nenhum pedido recente encontrado.
             </div>
         }
@@ -99,52 +161,56 @@ else
 {
     <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div class="dashboard-card">
+            <div class="dashboard-card h-100">
                 <div class="dashboard-card-icon bg-success-subtle">🧺</div>
                 <h5>Nova solicitação</h5>
                 <p>Solicite uma nova lavagem de forma rápida e simples.</p>
-                <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success">Solicitar Serviço</a>
+                <a asp-controller="Pedidos" asp-action="Create" class="btn btn-success mt-auto">Solicitar Serviço</a>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="dashboard-card">
+            <div class="dashboard-card h-100">
                 <div class="dashboard-card-icon bg-primary-subtle">📋</div>
                 <h5>Meus pedidos</h5>
                 <p>Acompanhe o andamento das suas solicitações.</p>
-                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary">Acompanhar pedidos</a>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-primary mt-auto">Acompanhar pedidos</a>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-section">
-        <div class="section-header">
-            <h3>Minhas solicitações recentes</h3>
+    <div class="dashboard-section bg-white p-4 rounded shadow-sm">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="h5 mb-0">Minhas solicitações recentes</h3>
             <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-secondary btn-sm">Ver todas</a>
         </div>
 
         @if (meusPedidos != null && meusPedidos.Any())
         {
             <div class="table-responsive">
-                <table class="table table-striped table-hover shadow-sm">
-                    <thead>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
                             <th>Tipo</th>
-                            <th>Quantidade</th>
+                            <th>Valor</th>
                             <th>Status</th>
                             <th>Entrada</th>
-                            <th>Entrega</th>
+                            <th>Entrega Prevista</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var pedido in meusPedidos)
                         {
                             <tr>
-                                <td>@pedido.TipoLavagem</td>
-                                <td>@pedido.Quantidade</td>
-                                <td>@pedido.Status</td>
+                                <td class="fw-bold">@pedido.TipoLavagem</td>
+                                <td>@pedido.Valor.ToString("C")</td>
+                                <td>
+                                    <span class="badge @(pedido.Status == "Entregue" ? "bg-success" : (pedido.Status == "Recebido" ? "bg-info" : "bg-warning text-dark"))">
+                                        @pedido.Status
+                                    </span>
+                                </td>
                                 <td>@pedido.DataEntrada.ToString("dd/MM/yyyy")</td>
-                                <td>@(pedido.DataEntrega.HasValue? pedido.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                <td>@(pedido.DataEntrega.HasValue ? pedido.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
                             </tr>
                         }
                     </tbody>
@@ -153,7 +219,7 @@ else
         }
         else
         {
-            <div class="empty-state">
+            <div class="text-center py-4 text-muted">
                 Você ainda não possui solicitações cadastradas.
             </div>
         }

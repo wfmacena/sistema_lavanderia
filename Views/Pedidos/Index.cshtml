@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SistemaLavanderia.Models.Pedido>
+@model IEnumerable<SistemaLavanderia.Models.Pedido>
 
 @{
     var statusAtual = ViewBag.StatusAtual as string;
@@ -12,8 +12,10 @@
     {
         return status switch
         {
-            "Recebido" => "bg-secondary",
-            "Em Lavagem" => "bg-warning text-dark",
+            "Recebido" => "bg-info",
+            "Lavando" => "bg-warning text-dark",
+            "Secando" => "bg-warning text-dark",
+            "Passando" => "bg-warning text-dark",
             "Pronto" => "bg-primary",
             "Entregue" => "bg-success",
             "Cancelado" => "bg-danger",
@@ -22,62 +24,68 @@
     }
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>@tituloPagina</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">@tituloPagina</h2>
 
-    <a asp-action="Create" class="btn btn-success shadow">
+    <a asp-action="Create" class="btn btn-success shadow-sm px-4">
         @textoBotao
     </a>
 </div>
 
-<form method="get" asp-action="Index" class="row g-3 mb-3">
-    <div class="col-md-3">
-        <label class="form-label">Filtrar por status</label>
-        <select name="status" class="form-control">
-            <option value="" selected="@(string.IsNullOrEmpty(statusAtual))">Todos</option>
-            <option value="Recebido" selected="@(statusAtual == "Recebido")">Recebido</option>
-            <option value="Em Lavagem" selected="@(statusAtual == "Em Lavagem")">Em Lavagem</option>
-            <option value="Pronto" selected="@(statusAtual == "Pronto")">Pronto</option>
-            <option value="Entregue" selected="@(statusAtual == "Entregue")">Entregue</option>
-            <option value="Cancelado" selected="@(statusAtual == "Cancelado")">Cancelado</option>
-        </select>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small">Filtrar por status</label>
+                <select name="status" class="form-select">
+                    <option value="" selected="@(string.IsNullOrEmpty(statusAtual))">Todos</option>
+                    <option value="Recebido" selected="@(statusAtual == "Recebido")">Recebido</option>
+                    <option value="Lavando" selected="@(statusAtual == "Lavando")">Lavando</option>
+                    <option value="Secando" selected="@(statusAtual == "Secando")">Secando</option>
+                    <option value="Passando" selected="@(statusAtual == "Passando")">Passando</option>
+                    <option value="Pronto" selected="@(statusAtual == "Pronto")">Pronto</option>
+                    <option value="Entregue" selected="@(statusAtual == "Entregue")">Entregue</option>
+                    <option value="Cancelado" selected="@(statusAtual == "Cancelado")">Cancelado</option>
+                </select>
+            </div>
+
+            @if (perfil == "Administrador")
+            {
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Buscar por cliente</label>
+                    <input type="text"
+                           name="buscaCliente"
+                           class="form-control"
+                           value="@ViewBag.BuscaCliente"
+                           placeholder="Digite o nome do cliente" />
+                </div>
+            }
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">Limpar</a>
+            </div>
+        </form>
     </div>
+</div>
 
-    @if (perfil == "Administrador")
-    {
-        <div class="col-md-4">
-            <label class="form-label">Buscar por cliente</label>
-            <input type="text"
-                   name="buscaCliente"
-                   class="form-control"
-                   value="@ViewBag.BuscaCliente"
-                   placeholder="Digite o nome do cliente" />
-        </div>
-    }
-
-    <div class="col-md-2 d-flex align-items-end">
-        <button type="submit" class="btn btn-secondary">Filtrar</button>
-    </div>
-
-    <div class="col-md-2 d-flex align-items-end">
-        <a asp-action="Index" class="btn btn-outline-secondary">Limpar</a>
-    </div>
-</form>
-
-<div class="table-responsive">
-    <table class="table table-striped table-hover shadow-sm">
+<div class="table-responsive shadow-sm">
+    <table class="table table-hover align-middle mb-0">
         <thead>
             <tr>
                 @if (perfil == "Administrador")
                 {
                     <th>Cliente</th>
                 }
-                <th>Tipo de Lavagem</th>
-                <th>Quantidade</th>
+                <th>Tipo</th>
+                <th>Qtd</th>
                 <th>Valor</th>
                 <th>Status</th>
-                <th>Data Entrada</th>
-                <th>Data Entrega</th>
+                <th>Pagamento</th>
+                <th>Entrada</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -89,57 +97,83 @@
                     <tr>
                         @if (perfil == "Administrador")
                         {
-                            <td>@item.Cliente?.Nome</td>
+                            <td class="fw-bold">@item.Cliente?.Nome</td>
                         }
 
                         <td>@item.TipoLavagem</td>
                         <td>@item.Quantidade</td>
-                        <td>@item.Valor.ToString("C")</td>
+                        <td class="fw-bold">@item.Valor.ToString("C")</td>
                         <td>
                             <span class="badge @ObterClasseStatus(item.Status)">
                                 @item.Status
                             </span>
                         </td>
-                        <td>@item.DataEntrada.ToString("dd/MM/yyyy")</td>
-                        <td>@(item.DataEntrega.HasValue? item.DataEntrega.Value.ToString("dd/MM/yyyy") : "-")</td>
                         <td>
-                            @if (perfil == "Administrador")
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                                <span> | </span>
-                                <a asp-action="Delete" asp-route-id="@item.Id">Excluir</a>
+                            <span class="badge @(item.StatusPagamento == "Pago" ? "bg-success" : "bg-danger")">
+                                @item.StatusPagamento
+                            </span>
+                        </td>
+                        <td class="small">@item.DataEntrada.ToString("dd/MM/yyyy")</td>
+                        <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-dark" title="Ver Detalhes">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        @if (perfil == "Administrador")
+                                {
+                                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="viewport">
+                                        Status
+                                    </button>
+                                    <ul class="dropdown-menu shadow">
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Recebido" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Recebido</button></form></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Lavando" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Lavando</button></form></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Secando" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Secando</button></form></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Passando" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Passando</button></form></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Pronto" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Pronto</button></form></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Entregue" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Entregue</button></form></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><form asp-action="AlterarStatus" asp-route-id="@item.Id" asp-route-status="Cancelado" method="post">@Html.AntiForgeryToken()<button class="dropdown-item text-danger">Cancelado</button></form></li>
+                                    </ul>
 
-                                @if (item.Status != "Entregue" && item.Status != "Cancelado")
-                                {
-                                    <span> | </span>
-                                    <form asp-action="MarcarComoEntregue"
-                                          asp-route-id="@item.Id"
-                                          method="post"
-                                          style="display:inline;">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-success">
-                                            Marcar como Entregue
-                                        </button>
-                                    </form>
-                                }
-                            }
-                            else
-                            {
-                                @if (item.Status != "Entregue" && item.Status != "Cancelado")
-                                {
-                                    <form asp-action="Cancelar" method="post" style="display:inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            Cancelar
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="viewport">
+                                        Pago
+                                    </button>
+                                    <ul class="dropdown-menu shadow dropdown-menu-end">
+                                        <li><form asp-action="AlterarStatusPagamento" asp-route-id="@item.Id" asp-route-status="Pago" asp-route-formaPagamento="Dinheiro" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Dinheiro</button></form></li>
+                                        <li><form asp-action="AlterarStatusPagamento" asp-route-id="@item.Id" asp-route-status="Pago" asp-route-formaPagamento="Cartão" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Cartão</button></form></li>
+                                        <li><form asp-action="AlterarStatusPagamento" asp-route-id="@item.Id" asp-route-status="Pago" asp-route-formaPagamento="Pix" method="post">@Html.AntiForgeryToken()<button class="dropdown-item">Pix</button></form></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><form asp-action="AlterarStatusPagamento" asp-route-id="@item.Id" asp-route-status="Pendente" method="post">@Html.AntiForgeryToken()<button class="dropdown-item text-danger">Pendente</button></form></li>
+                                    </ul>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-dark" title="Editar"><i class="bi bi-pencil"></i></a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger" title="Excluir"><i class="bi bi-trash"></i></a>
                                 }
                                 else
                                 {
-                                    <span class="text-muted">Não disponível</span>
+                                    @if (item.StatusPagamento == "Pendente" && item.Status != "Cancelado")
+                                    {
+                                        <a asp-action="PagamentoPix" asp-route-id="@item.Id" class="btn btn-success btn-sm rounded-pill px-3">
+                                            <i class="bi bi-qr-code me-1"></i> Pagar PIX
+                                        </a>
+                                    }
+                                    
+                                    @if (item.Status != "Entregue" && item.Status != "Cancelado")
+                                    {
+                                        <form asp-action="Cancelar" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Cancelar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Finalizado</span>
+                                    }
                                 }
-                            }
+                            </div>
                         </td>
                     </tr>
                 }
@@ -147,7 +181,7 @@
             else
             {
                 <tr>
-                    <td colspan="@(perfil == "Administrador" ? 8 : 7)" class="text-center">
+                    <td colspan="@(perfil == "Administrador" ? 8 : 7)" class="text-center py-5 text-muted">
                         Nenhum pedido encontrado.
                     </td>
                 </tr>

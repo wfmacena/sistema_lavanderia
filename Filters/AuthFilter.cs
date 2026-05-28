@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SistemaLavanderia.Filters
@@ -13,8 +13,8 @@ namespace SistemaLavanderia.Filters
             var action = context.RouteData.Values["action"]?.ToString();
 
             bool paginaPublica =
-                controller == "Account" &&
-                (action == "Login" || action == "Register");
+                (controller == "Account" && (action == "Login" || action == "Register")) ||
+                (controller == "Home" && action == "Welcome");
 
             if (string.IsNullOrEmpty(usuarioLogado) && !paginaPublica)
             {

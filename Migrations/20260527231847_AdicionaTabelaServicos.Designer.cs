@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaLavanderia.Data;
 
@@ -10,9 +11,11 @@ using SistemaLavanderia.Data;
 namespace SistemaLavanderia.Migrations
 {
     [DbContext(typeof(LavanderiaContext))]
-    partial class LavanderiaContextModelSnapshot : ModelSnapshot
+    [Migration("20260527231847_AdicionaTabelaServicos")]
+    partial class AdicionaTabelaServicos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -93,9 +96,6 @@ namespace SistemaLavanderia.Migrations
 
                     b.Property<string>("FormaPagamento")
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Observacoes")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Quantidade")
@@ -215,7 +215,7 @@ namespace SistemaLavanderia.Migrations
             modelBuilder.Entity("SistemaLavanderia.Models.ItemPedido", b =>
                 {
                     b.HasOne("SistemaLavanderia.Models.Pedido", "Pedido")
-                        .WithMany("ItensPedido")
+                        .WithMany("Itens")
                         .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -253,7 +253,7 @@ namespace SistemaLavanderia.Migrations
 
             modelBuilder.Entity("SistemaLavanderia.Models.Pedido", b =>
                 {
-                    b.Navigation("ItensPedido");
+                    b.Navigation("Itens");
                 });
 #pragma warning restore 612, 618
         }

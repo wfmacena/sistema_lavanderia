@@ -1,66 +1,85 @@
-﻿@model SistemaLavanderia.Models.RegisterViewModel
+@model SistemaLavanderia.Models.RegisterViewModel
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow border-0 rounded-4">
-            <div class="card-body p-4">
-                <h2 class="text-center mb-4 fw-bold">Criar Conta</h2>
+@{
+    ViewData["Title"] = "Criar Conta";
+}
 
-                @if (ViewBag.Erro != null)
-                {
-                    <div class="alert alert-danger">@ViewBag.Erro</div>
-                }
+<div class="auth-container fade-in">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="mb-3 text-primary display-6">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+            <h2>Criar sua Conta</h2>
+            <p class="text-muted">Comece a gerenciar seus pedidos hoje mesmo.</p>
+        </div>
 
-                <form asp-action="Register" method="post">
-                    <div class="mb-3">
-                        <label asp-for="Nome" class="form-label"></label>
-                        <input asp-for="Nome" class="form-control" />
-                        <span asp-validation-for="Nome" class="text-danger"></span>
+        @if (ViewBag.Erro != null)
+        {
+            <div class="alert alert-danger mb-4 d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <div>@ViewBag.Erro</div>
+            </div>
+        }
+
+        <form asp-action="Register" method="post" class="needs-validation" novalidate>
+            <div class="form-floating mb-3">
+                <input asp-for="Nome" class="form-control form-control-modern" placeholder="Nome Completo" required />
+                <label asp-for="Nome">Nome Completo</label>
+                <span asp-validation-for="Nome" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Login" class="form-control form-control-modern" placeholder="Usuário" required />
+                <label asp-for="Login">Nome de Usuário</label>
+                <span asp-validation-for="Login" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Cpf" class="form-control form-control-modern" id="cpf" maxlength="14" placeholder="000.000.000-00" required />
+                <label asp-for="Cpf">CPF</label>
+                <span asp-validation-for="Cpf" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control form-control-modern" type="email" placeholder="nome@exemplo.com" required />
+                <label asp-for="Email">E-mail</label>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Telefone" class="form-control form-control-modern" id="telefone" maxlength="15" placeholder="(11) 99999-9999" required />
+                <label asp-for="Telefone">Telefone / WhatsApp</label>
+                <span asp-validation-for="Telefone" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-2 mb-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Senha" class="form-control form-control-modern" type="password" placeholder="Senha" required />
+                        <label asp-for="Senha">Senha</label>
+                        <span asp-validation-for="Senha" class="text-danger small"></span>
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Login" class="form-label"></label>
-                        <input asp-for="Login" class="form-control" />
-                        <span asp-validation-for="Login" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="ConfirmarSenha" class="form-control form-control-modern" type="password" placeholder="Confirmar" required />
+                        <label asp-for="ConfirmarSenha">Confirmar</label>
+                        <span asp-validation-for="ConfirmarSenha" class="text-danger small"></span>
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Cpf" class="form-label">CPF</label>
-                        <input asp-for="Cpf" class="form-control" id="cpf" maxlength="14" placeholder="000.000.000-00" />
-                        <span asp-validation-for="Cpf" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Telefone" class="form-label"></label>
-                        <input asp-for="Telefone" class="form-control" id="telefone" maxlength="15" placeholder="(11) 99999-9999" />
-                        <span asp-validation-for="Telefone" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Senha" class="form-label"></label>
-                        <input asp-for="Senha" class="form-control" />
-                        <span asp-validation-for="Senha" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="ConfirmarSenha" class="form-label"></label>
-                        <input asp-for="ConfirmarSenha" class="form-control" />
-                        <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-success w-100">Cadastrar</button>
-                </form>
-
-                <div class="text-center mt-4">
-                    <a asp-controller="Account" asp-action="Login">Já tenho conta</a>
                 </div>
             </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow mb-3">
+                Finalizar Cadastro
+            </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="text-muted mb-0">Já possui uma conta?</p>
+            <a asp-controller="Account" asp-action="Login" class="text-primary fw-bold text-decoration-none">
+                Acesse o Sistema <i class="bi bi-chevron-right small"></i>
+            </a>
         </div>
     </div>
 </div>
@@ -77,9 +96,8 @@
         if (cpfInput) {
             cpfInput.addEventListener('input', function (e) {
                 let value = e.target.value.replace(/\D/g, '');
-
                 if (value.length > 11) value = value.slice(0, 11);
-
+                
                 if (value.length > 9) {
                     value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
                 } else if (value.length > 6) {
@@ -87,7 +105,6 @@
                 } else if (value.length > 3) {
                     value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
                 }
-
                 e.target.value = value;
             });
         }
@@ -95,19 +112,17 @@
         if (telefoneInput) {
             telefoneInput.addEventListener('input', function (e) {
                 let value = e.target.value.replace(/\D/g, '');
-
                 if (value.length > 11) value = value.slice(0, 11);
 
                 if (value.length > 10) {
-                    value = value.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
                 } else if (value.length > 6) {
-                    value = value.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
+                    value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
                 } else if (value.length > 2) {
-                    value = value.replace(/(\d{2})(\d{1,5})/, '($1) $2');
+                    value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
                 } else if (value.length > 0) {
-                    value = value.replace(/(\d{1,2})/, '($1');
+                    value = value.replace(/(\d{0,2})/, '($1');
                 }
-
                 e.target.value = value;
             });
         }

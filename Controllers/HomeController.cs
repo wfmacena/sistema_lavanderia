@@ -22,11 +22,8 @@ namespace SistemaLavanderia.Controllers
             return View();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            if (HttpContext.Session.GetString("UsuarioLogin") == null)
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             var nome = HttpContext.Session.GetString("UsuarioNome");
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -35,29 +32,57 @@ namespace SistemaLavanderia.Controllers
             ViewBag.Nome = nome;
             ViewBag.Perfil = perfil;
 
+            var dashboard = new DashboardViewModel
+            {
+                TotalClientes = await _context.Clientes.CountAsync(),
+                TotalPedidos = await _context.Pedidos.CountAsync(),
+                PedidosRecebidos = await _context.Pedidos.CountAsync(p => p.Status == "Recebido"),
+                PedidosEmLavagem = await _context.Pedidos.CountAsync(p => p.Status == "Lavando" || p.Status == "Secando" || p.Status == "Passando"),
+                PedidosProntos = await _context.Pedidos.CountAsync(p => p.Status == "Pronto"),
+                PedidosEntregues = await _context.Pedidos.CountAsync(p => p.Status == "Entregue"),
+                TotalServicosAtivos = await _context.Servicos.CountAsync(s => s.Ativo)
+            };
+
             if (perfil == "Administrador")
             {
-                var pedidosRecentes = _context.Pedidos
+                ViewBag.PedidosRecentes = await _context.Pedidos
                     .Include(p => p.Cliente)
                     .OrderByDescending(p => p.DataEntrada)
                     .Take(5)
-                    .ToList();
+                    .ToListAsync();
+                
+                var listaFaturamentoPago = await _context.Pedidos
+                    .Where(p => p.StatusPagamento == "Pago")
+                    .Select(p => p.Valor)
+                    .ToListAsync();
+                
+                var listaFaturamentoPendente = await _context.Pedidos
+                    .Where(p => p.StatusPagamento != "Pago" && p.Status != "Cancelado")
+                    .Select(p => p.Valor)
+                    .ToListAsync();
 
-                ViewBag.PedidosRecentes = pedidosRecentes;
+                dashboard.FaturamentoPago = listaFaturamentoPago.Sum();
+                dashboard.FaturamentoPendente = listaFaturamentoPendente.Sum();
+                
+                ViewBag.FaturamentoTotal = dashboard.FaturamentoPago;
             }
             else
             {
-                var meusPedidos = _context.Pedidos
+                ViewBag.MeusPedidos = await _context.Pedidos
                     .Include(p => p.Cliente)
                     .Where(p => p.UsuarioId == usuarioId)
                     .OrderByDescending(p => p.DataEntrada)
                     .Take(5)
-                    .ToList();
+                    .ToListAsync();
 
-                ViewBag.MeusPedidos = meusPedidos;
+                dashboard.TotalPedidos = await _context.Pedidos.CountAsync(p => p.UsuarioId == usuarioId);
+                dashboard.PedidosRecebidos = await _context.Pedidos.CountAsync(p => p.UsuarioId == usuarioId && p.Status == "Recebido");
+                dashboard.PedidosEmLavagem = await _context.Pedidos.CountAsync(p => p.UsuarioId == usuarioId && (p.Status == "Lavando" || p.Status == "Secando" || p.Status == "Passando"));
+                dashboard.PedidosProntos = await _context.Pedidos.CountAsync(p => p.UsuarioId == usuarioId && p.Status == "Pronto");
+                dashboard.PedidosEntregues = await _context.Pedidos.CountAsync(p => p.UsuarioId == usuarioId && p.Status == "Entregue");
             }
 
-            return View();
+            return View(dashboard);
         }
 
         public IActionResult Privacy()

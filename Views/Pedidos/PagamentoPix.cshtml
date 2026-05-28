@@ -1,0 +1,77 @@
+@model SistemaLavanderia.Models.Pedido
+
+@{
+    ViewData["Title"] = "Pagamento PIX";
+}
+
+<div class="container mt-4 fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card-modern shadow-lg border-0 overflow-hidden">
+                <div class="bg-success text-white p-4 text-center">
+                    <h3 class="fw-black mb-0"><i class="bi bi-qr-code me-2"></i>Pagamento PIX</h3>
+                    <p class="mb-0 opacity-75">Pedido #@Model.Id.ToString("D5")</p>
+                </div>
+
+                <div class="card-body p-4 text-center">
+                    <p class="text-muted mb-4">Escaneie o QR Code abaixo ou copie a chave PIX para realizar o pagamento.</p>
+
+                    <!-- QR Code Simulado -->
+                    <div class="bg-light p-4 rounded-4 mb-4 d-inline-block shadow-sm">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126360014br.gov.bcb.pix0114+55119999999995204000053039865405@(Model.Valor.ToString("F2").Replace(",", ""))5802BR5915CleanTShirt6009SaoPaulo62070503***6304" 
+                             alt="QR Code PIX" class="img-fluid" style="max-width: 200px;" />
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="fw-black text-primary mb-1">@Model.Valor.ToString("C")</h4>
+                        <span class="badge bg-success-subtle text-success px-3">Aguardando Pagamento</span>
+                    </div>
+
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control form-control-modern bg-light" value="00020126360014br.gov.bcb.pix0114..." id="pixKey" readonly>
+                        <button class="btn btn-outline-primary" type="button" onclick="copyPixKey()">
+                            <i class="bi bi-copy"></i> Copiar
+                        </button>
+                    </div>
+
+                    <form asp-action="ConfirmarPagamentoSimulado" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm mb-3">
+                            <i class="bi bi-check-circle-fill me-2"></i> Já realizei o pagamento
+                        </button>
+                    </form>
+
+                    <a asp-action="Index" class="text-muted text-decoration-none small">
+                        <i class="bi bi-arrow-left"></i> Voltar para meus pedidos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyPixKey() {
+            const copyText = document.getElementById("pixKey");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            
+            // Feedback visual
+            const btn = event.currentTarget;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check"></i> Copiado!';
+            btn.classList.replace('btn-outline-primary', 'btn-primary');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.replace('btn-primary', 'btn-outline-primary');
+            }, 2000);
+        }
+    </script>
+}
+
+<style>
+    .bg-success-subtle { background-color: rgba(16, 185, 129, 0.1) !important; }
+</style>

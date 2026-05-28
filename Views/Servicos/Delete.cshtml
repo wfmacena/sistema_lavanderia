@@ -1,0 +1,44 @@
+@model SistemaLavanderia.Models.Servico
+
+@{
+    ViewData["Title"] = "Excluir Serviço";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-danger text-white p-3">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Exclusão</h4>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p class="lead mb-4">Tem certeza que deseja excluir o serviço abaixo?</p>
+                    
+                    <div class="bg-light p-3 rounded-3 mb-4 text-start">
+                        <div class="mb-2"><strong>Nome:</strong> @Model.Nome</div>
+                        <div class="mb-2"><strong>Descrição:</strong> @Model.Descricao</div>
+                        <div class="mb-2"><strong>Preço:</strong> @Model.PrecoBase.ToString("C")</div>
+                        <div><strong>Unidade:</strong> @Model.UnidadeMedida</div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Nota: Este serviço será desativado e não aparecerá mais para novas solicitações.
+                    </div>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="bi bi-trash me-1"></i> Confirmar Exclusão
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-x-lg me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

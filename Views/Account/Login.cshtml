@@ -1,41 +1,58 @@
-﻿@model SistemaLavanderia.Models.LoginViewModel
+@model SistemaLavanderia.Models.LoginViewModel
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow border-0">
-            <div class="card-body">
-                <h2 class="text-center mb-4">Entrar no Sistema</h2>
+@{
+    ViewData["Title"] = "Entrar";
+}
 
-                @if (TempData["Sucesso"] != null)
-                {
-                    <div class="alert alert-success">@TempData["Sucesso"]</div>
-                }
-
-                @if (ViewBag.Erro != null)
-                {
-                    <div class="alert alert-danger">@ViewBag.Erro</div>
-                }
-
-                <form asp-action="Login" method="post">
-                    <div class="mb-3">
-                        <label asp-for="Login" class="form-label">Login</label>
-                        <input asp-for="Login" class="form-control" />
-                        <span asp-validation-for="Login" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Senha" class="form-label">Senha</label>
-                        <input asp-for="Senha" class="form-control" />
-                        <span asp-validation-for="Senha" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-dark w-100">Entrar</button>
-                </form>
-
-                <div class="text-center mt-3">
-                    <a asp-action="Register">Criar conta</a>
-                </div>
+<div class="auth-container fade-in">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="mb-3 text-primary display-6">
+                <i class="bi bi-shield-lock-fill"></i>
             </div>
+            <h2>Bem-vindo de volta</h2>
+            <p class="text-muted">Acesse sua conta para gerenciar pedidos.</p>
+        </div>
+
+        @if (TempData["Sucesso"] != null)
+        {
+            <div class="alert alert-success mb-4 d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <div>@TempData["Sucesso"]</div>
+            </div>
+        }
+
+        @if (ViewBag.Erro != null)
+        {
+            <div class="alert alert-danger mb-4 d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div>@ViewBag.Erro</div>
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <div class="form-floating mb-3">
+                <input asp-for="Login" class="form-control form-control-modern" placeholder="Login" required />
+                <label asp-for="Login">Usuário</label>
+                <span asp-validation-for="Login" class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-4">
+                <input asp-for="Senha" class="form-control form-control-modern" type="password" placeholder="Senha" required />
+                <label asp-for="Senha">Senha</label>
+                <span asp-validation-for="Senha" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow mb-3">
+                Entrar no Sistema
+            </button>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="text-muted mb-0">Novo por aqui?</p>
+            <a asp-action="Register" class="text-primary fw-bold text-decoration-none">
+                Criar uma Conta <i class="bi bi-chevron-right small"></i>
+            </a>
         </div>
     </div>
 </div>

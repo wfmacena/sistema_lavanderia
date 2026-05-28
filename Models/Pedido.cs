@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SistemaLavanderia.Models
@@ -28,14 +28,23 @@ namespace SistemaLavanderia.Models
         [StringLength(30)]
         public string Status { get; set; } = "Recebido";
 
+        [Required]
+        [StringLength(20)]
+        public string StatusPagamento { get; set; } = "Pendente";
+
+        [StringLength(50)]
+        public string? FormaPagamento { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime DataEntrada { get; set; } = DateTime.Now;
 
         [DataType(DataType.Date)]
         public DateTime? DataEntrega { get; set; }
 
+        public string? Observacoes { get; set; }
+
         public Cliente? Cliente { get; set; }
         public Usuario? Usuario { get; set; }
-        public List<ItemPedido> Itens { get; set; } = new();
+        public List<ItemPedido> ItensPedido { get; set; } = new();
     }
 }

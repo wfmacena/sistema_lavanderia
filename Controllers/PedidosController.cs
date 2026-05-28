@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaLavanderia.Data;
@@ -15,60 +15,8 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
-        private decimal ObterValorUnitarioPeca(string tipoPeca)
-        {
-            return tipoPeca switch
-            {
-                "Camisa" => 8.00m,
-                "Calça" => 10.00m,
-                "Jaqueta" => 18.00m,
-                "Toalha" => 6.00m,
-                "Lençol" => 12.00m,
-                "Cobertor" => 25.00m,
-                "Edredom" => 35.00m,
-                "Outros" => 10.00m,
-                _ => 0.00m
-            };
-        }
-
-        private List<ItemPedido> GerarItensPedido(PedidoCreateViewModel model, int pedidoId)
-        {
-            var itens = new List<ItemPedido>();
-
-            void AdicionarItem(string tipo, int quantidade)
-            {
-                if (quantidade > 0)
-                {
-                    var valorUnitario = ObterValorUnitarioPeca(tipo);
-
-                    itens.Add(new ItemPedido
-                    {
-                        PedidoId = pedidoId,
-                        TipoPeca = tipo,
-                        Quantidade = quantidade,
-                        ValorUnitario = valorUnitario,
-                        Subtotal = valorUnitario * quantidade
-                    });
-                }
-            }
-
-            AdicionarItem("Camisa", model.Camisa);
-            AdicionarItem("Calça", model.Calca);
-            AdicionarItem("Jaqueta", model.Jaqueta);
-            AdicionarItem("Toalha", model.Toalha);
-            AdicionarItem("Lençol", model.Lencol);
-            AdicionarItem("Cobertor", model.Cobertor);
-            AdicionarItem("Edredom", model.Edredom);
-            AdicionarItem("Outros", model.Outros);
-
-            return itens;
-        }
-
         public async Task<IActionResult> Index(string status, string buscaCliente)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             int.TryParse(usuarioIdStr, out int usuarioId);
@@ -80,7 +28,12 @@ namespace SistemaLavanderia.Controllers
 
             if (perfil != "Administrador")
             {
-                pedidos = pedidos.Where(p => p.UsuarioId == usuarioId);
+                // Busca o ID do usuário de forma segura da sessão
+                var idSessao = HttpContext.Session.GetString("UsuarioId");
+                if (int.TryParse(idSessao, out int idLogado))
+                {
+                    pedidos = pedidos.Where(p => p.UsuarioId == idLogado);
+                }
             }
 
             if (!string.IsNullOrEmpty(status))
@@ -100,39 +53,50 @@ namespace SistemaLavanderia.Controllers
             return View(await pedidos.ToListAsync());
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var pedido = await _context.Pedidos
+                .Include(p => p.Cliente)
+                .Include(p => p.Usuario)
+                .Include(p => p.ItensPedido)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (pedido == null) return NotFound();
+
+            // Segurança: usuários comuns só veem seus próprios pedidos
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            int.TryParse(usuarioIdStr, out int usuarioId);
+
+            if (perfil != "Administrador" && pedido.UsuarioId != usuarioId)
+                return RedirectToAction("AcessoNegado", "Account");
+
+            return View(pedido);
+        }
+
         public IActionResult Create()
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            var servicos = _context.Servicos.Where(s => s.Ativo).ToList();
 
             if (perfil == "Administrador")
             {
                 ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome");
-                ViewBag.NomeClienteLogado = null;
             }
             else
             {
                 var clienteIdStr = HttpContext.Session.GetString("ClienteId");
                 int.TryParse(clienteIdStr, out int clienteId);
-
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == clienteId);
-
-                ViewBag.ClienteId = new SelectList(
-                    _context.Clientes.Where(c => c.Id == clienteId),
-                    "Id",
-                    "Nome",
-                    clienteId
-                );
-
-                ViewBag.NomeClienteLogado = cliente?.Nome;
+                ViewBag.ClienteId = new SelectList(_context.Clientes.Where(c => c.Id == clienteId), "Id", "Nome", clienteId);
             }
 
+            ViewBag.Servicos = servicos;
             ViewBag.Perfil = perfil;
 
             var model = new PedidoCreateViewModel
-            {
+            {              
                 DataEntrada = DateTime.Today,
                 Status = "Recebido"
             };
@@ -144,101 +108,82 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PedidoCreateViewModel model)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
 
             if (perfil != "Administrador")
             {
                 var clienteIdStr = HttpContext.Session.GetString("ClienteId");
-                if (int.TryParse(clienteIdStr, out int clienteId))
-                {
-                    model.ClienteId = clienteId;
-                }
+                if (int.TryParse(clienteIdStr, out int clienteId)) model.ClienteId = clienteId;
 
                 var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
-                if (int.TryParse(usuarioIdStr, out int usuarioId))
-                {
-                    model.UsuarioId = usuarioId;
-                }
+                if (int.TryParse(usuarioIdStr, out int usuarioId)) model.UsuarioId = usuarioId;
 
                 model.Status = "Recebido";
-                model.DataEntrega = null;
             }
 
-            int quantidadeTotal =
-                model.Camisa + model.Calca + model.Jaqueta + model.Toalha +
-                model.Lencol + model.Cobertor + model.Edredom + model.Outros;
-
-            if (quantidadeTotal <= 0)
+            if (model.Itens == null || !model.Itens.Any(i => i.Quantidade > 0))
             {
-                ModelState.AddModelError("", "Informe pelo menos uma peça para a solicitação.");
-            }
-
-            if (model.DataEntrada == default)
-            {
-                model.DataEntrada = DateTime.Today;
+                ModelState.AddModelError("", "Adicione pelo menos um item ao pedido.");
             }
 
             if (ModelState.IsValid)
             {
                 var pedido = new Pedido
-                {
+                { 
                     ClienteId = model.ClienteId,
                     UsuarioId = model.UsuarioId,
                     TipoLavagem = model.TipoLavagem,
-                    Quantidade = quantidadeTotal,
                     Status = model.Status,
                     DataEntrada = model.DataEntrada,
                     DataEntrega = model.DataEntrega,
-                    Valor = 0
+                    StatusPagamento = "Pendente",
+                    Observacoes = model.Observacoes,
+                    Quantidade = model.Itens?.Where(i => i.Quantidade > 0).Sum(i => i.Quantidade) ?? 0,
+                    Valor = 0 // Será calculado abaixo
                 };
 
                 _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
 
-                var itens = GerarItensPedido(model, pedido.Id);
-                _context.ItensPedido.AddRange(itens);
+                decimal valorTotal = 0;
+                foreach (var itemVM in (model.Itens ?? new List<ItemPedidoViewModel>()).Where(i => i.Quantidade > 0))
+                { 
+                    var servico = await _context.Servicos.FindAsync(itemVM.ServicoId);
+                    if (servico != null)
+                    {
+                        var itemPedido = new ItemPedido
+                        {
+                            PedidoId = pedido.Id,
+                            TipoPeca = servico.Nome,
+                            Quantidade = itemVM.Quantidade,
+                            ValorUnitario = servico.PrecoBase,
+                            Subtotal = servico.PrecoBase * itemVM.Quantidade
+                        };
+                        _context.ItensPedido.Add(itemPedido);
+                        valorTotal += itemPedido.Subtotal;
+                    }
+                }
 
-                pedido.Valor = itens.Sum(i => i.Subtotal);
-
-                _context.Pedidos.Update(pedido);
+                pedido.Valor = valorTotal;
                 await _context.SaveChangesAsync();
 
+                TempData["Sucesso"] = "Pedido realizado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewBag.Servicos = _context.Servicos.Where(s => s.Ativo).ToList();
             if (perfil == "Administrador")
-            {
                 ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", model.ClienteId);
-                ViewBag.NomeClienteLogado = null;
-            }
             else
-            {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == model.ClienteId);
+                ViewBag.ClienteId = new SelectList(_context.Clientes.Where(c => c.Id == model.ClienteId), "Id", "Nome", model.ClienteId);
 
-                ViewBag.ClienteId = new SelectList(
-                    _context.Clientes.Where(c => c.Id == model.ClienteId),
-                    "Id",
-                    "Nome",
-                    model.ClienteId
-                );
-
-                ViewBag.NomeClienteLogado = cliente?.Nome;
-            }
-
-            ViewBag.Perfil = perfil;
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MarcarComoEntregue(int id)
+        public async Task<IActionResult> AlterarStatus(int id, string status)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             if (perfil != "Administrador")
                 return RedirectToAction("AcessoNegado", "Account");
@@ -248,10 +193,32 @@ namespace SistemaLavanderia.Controllers
             if (pedido == null)
                 return NotFound();
 
-            pedido.Status = "Entregue";
+            pedido.Status = status;
 
-            if (!pedido.DataEntrega.HasValue)
+            if (status == "Entregue" && !pedido.DataEntrega.HasValue)
                 pedido.DataEntrega = DateTime.Now;
+
+            _context.Update(pedido);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlterarStatusPagamento(int id, string status, string formaPagamento)
+        {
+            var perfil = HttpContext.Session.GetString("UsuarioPerfil");
+            if (perfil != "Administrador")
+                return RedirectToAction("AcessoNegado", "Account");
+
+            var pedido = await _context.Pedidos.FindAsync(id);
+
+            if (pedido == null)
+                return NotFound();
+
+            pedido.StatusPagamento = status;
+            pedido.FormaPagamento = formaPagamento;
 
             _context.Update(pedido);
             await _context.SaveChangesAsync();
@@ -261,9 +228,6 @@ namespace SistemaLavanderia.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             if (perfil != "Administrador")
                 return RedirectToAction("AcessoNegado", "Account");
@@ -281,9 +245,6 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Pedido pedido)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             if (perfil != "Administrador")
                 return RedirectToAction("AcessoNegado", "Account");
@@ -303,9 +264,6 @@ namespace SistemaLavanderia.Controllers
 
         public async Task<IActionResult> Delete(int? id)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             if (perfil != "Administrador")
                 return RedirectToAction("AcessoNegado", "Account");
@@ -325,9 +283,6 @@ namespace SistemaLavanderia.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancelar(int id)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             int.TryParse(usuarioIdStr, out int usuarioId);
 
@@ -352,13 +307,43 @@ namespace SistemaLavanderia.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> PagamentoPix(int id)
+        {
+            var pedido = await _context.Pedidos
+                .Include(p => p.Cliente)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (pedido == null) return NotFound();
+
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            int.TryParse(usuarioIdStr, out int usuarioId);
+
+            if (pedido.UsuarioId != usuarioId) return RedirectToAction("AcessoNegado", "Account");
+
+            return View(pedido);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmarPagamentoSimulado(int id)
+        {
+            var pedido = await _context.Pedidos.FindAsync(id);
+            if (pedido == null) return NotFound();
+
+            pedido.StatusPagamento = "Pago";
+            pedido.FormaPagamento = "Pix";
+            
+            _context.Update(pedido);
+            await _context.SaveChangesAsync();
+
+            TempData["Sucesso"] = "Pagamento PIX confirmado com sucesso!";
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UsuarioLogin")))
-                return RedirectToAction("Login", "Account");
-
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
             if (perfil != "Administrador")
                 return RedirectToAction("AcessoNegado", "Account");

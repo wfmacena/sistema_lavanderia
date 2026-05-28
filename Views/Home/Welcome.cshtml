@@ -1,156 +1,178 @@
-﻿@{
-    ViewData["Title"] = "Welcome";
+@{
+    ViewData["Title"] = "Bem-vindo";
 }
 
-<div class="welcome-page">
-    <section class="welcome-hero">
-        <div class="welcome-hero-content">
-            <span class="welcome-badge">Sistema moderno para gestão de lavanderia</span>
-
-            <h1>Controle total da sua lavanderia</h1>
-
-            <p>
-                Organize pedidos, acompanhe lavagens, visualize clientes e tenha
-                uma gestão profissional e moderna.
+<div class="welcome-container fade-in">
+    <!-- Hero Section -->
+    <header class="hero-section text-center py-5 mb-5">
+        <div class="container">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3 fw-bold">
+                <i class="bi bi-stars me-1"></i> A Melhor Gestão para sua Lavanderia
+            </span>
+            <h1 class="display-3 fw-black mb-4 tracking-tight">
+                Lavanderia <span class="text-primary">Clean T-Shirt</span>
+            </h1>
+            <p class="lead text-secondary mx-auto mb-5" style="max-width: 700px;">
+                Simplifique seu negócio com nossa plataforma inteligente. Controle total de pedidos, clientes e serviços em um só lugar.
             </p>
-
-            <div class="welcome-actions">
-                <a asp-controller="Account" asp-action="Login" class="btn btn-light btn-lg">
-                    Entrar no sistema
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg">
+                    Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                 </a>
-
-                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">
-                    Criar minha conta
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-dark btn-lg px-5 py-3 rounded-pill fw-bold">
+                    Criar Conta Grátis
                 </a>
             </div>
         </div>
+    </header>
 
-        <div class="welcome-how-card">
-            <h3>Como funciona</h3>
-
-            <div class="how-item">
-                <span>Pedido recebido</span>
-                <span class="status-pill status-gray">Recebido</span>
-            </div>
-
-            <div class="how-item">
-                <span>Em lavagem</span>
-                <span class="status-pill status-yellow">Lavando</span>
-            </div>
-
-            <div class="how-item">
-                <span>Finalizado</span>
-                <span class="status-pill status-green">Entregue</span>
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card-modern p-4 h-100">
+                        <div class="icon-box bg-primary-subtle text-primary mb-3">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Rapidez e Eficiência</h4>
+                        <p class="text-muted mb-0">Cadastre pedidos em segundos e acompanhe o status em tempo real.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-modern p-4 h-100">
+                        <div class="icon-box bg-success-subtle text-success mb-3">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Segurança Total</h4>
+                        <p class="text-muted mb-0">Seus dados e de seus clientes protegidos com a melhor tecnologia.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-modern p-4 h-100">
+                        <div class="icon-box bg-info-subtle text-info mb-3">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Visão do Negócio</h4>
+                        <p class="text-muted mb-0">Relatórios detalhados para você tomar as melhores decisões.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="welcome-features-section">
-        <div class="welcome-section-title">
-            <h2>Por que escolher nosso sistema?</h2>
-            <p>
-                Uma solução completa para gerenciar sua lavanderia com eficiência e
-                profissionalismo
-            </p>
-        </div>
-
-        <div class="welcome-features-grid">
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-people-fill"></i>
+    <!-- Stats Section -->
+    <section class="stats-section py-5 my-5">
+        <div class="container bg-white rounded-5 p-5 shadow-sm border">
+            <div class="row text-center g-4">
+                <div class="col-6 col-md-3">
+                    <h2 class="fw-black text-primary mb-1">500+</h2>
+                    <p class="text-muted fw-semibold small text-uppercase tracking-wider">Clientes</p>
                 </div>
-                <h4>Gestão de Clientes</h4>
-                <p>
-                    Cadastre e gerencie todos os seus clientes com informações completas
-                    e histórico de pedidos.
-                </p>
-            </div>
-
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-tags-fill"></i>
+                <div class="col-6 col-md-3">
+                    <h2 class="fw-black text-primary mb-1">10k+</h2>
+                    <p class="text-muted fw-semibold small text-uppercase tracking-wider">Pedidos</p>
                 </div>
-                <h4>Serviços Personalizados</h4>
-                <p>
-                    Configure diferentes tipos de serviços, preços e unidades de medida.
-                </p>
-            </div>
-
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-clipboard-data-fill"></i>
+                <div class="col-6 col-md-3">
+                    <h2 class="fw-black text-primary mb-1">99%</h2>
+                    <p class="text-muted fw-semibold small text-uppercase tracking-wider">Satisfação</p>
                 </div>
-                <h4>Controle de Pedidos</h4>
-                <p>
-                    Acompanhe o status dos pedidos em tempo real: aguardando, lavando,
-                    pronto ou entregue.
-                </p>
-            </div>
-
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-calculator-fill"></i>
+                <div class="col-6 col-md-3">
+                    <h2 class="fw-black text-primary mb-1">24/7</h2>
+                    <p class="text-muted fw-semibold small text-uppercase tracking-wider">Suporte</p>
                 </div>
-                <h4>Cálculo Automático</h4>
-                <p>
-                    O sistema calcula automaticamente o valor total dos pedidos baseado
-                    nos serviços selecionados.
-                </p>
-            </div>
-
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-                <h4>Relatórios</h4>
-                <p>
-                    Acompanhe o desempenho do seu negócio com relatórios detalhados.
-                </p>
-            </div>
-
-            <div class="welcome-feature-card">
-                <div class="feature-icon-circle">
-                    <i class="bi bi-shield-fill-check"></i>
-                </div>
-                <h4>Segurança</h4>
-                <p>
-                    Sistema com autenticação e níveis de acesso para maior segurança dos dados.
-                </p>
             </div>
         </div>
     </section>
 
-    <section class="welcome-stats-section">
-        <div class="welcome-stat-item">
-            <h3>500+</h3>
-            <p>Clientes Atendidos</p>
+    <!-- CTA Section -->
+    <section class="cta-section py-5 mb-5">
+        <div class="container">
+            <div class="cta-card p-5 text-center shadow-lg position-relative overflow-hidden">
+                <div class="position-relative z-1 py-4">
+                    <h2 class="display-4 fw-black mb-4 text-white">Pronto para transformar sua lavanderia?</h2>
+                    <p class="lead mb-5 text-white opacity-75 mx-auto" style="max-width: 600px;">
+                        Junte-se a centenas de empreendedores que já profissionalizaram seu atendimento com a Clean T-Shirt.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold shadow-sm">
+                            Começar Agora Gratuitamente
+                        </a>
+                        <a href="https://wa.me/5511999999999" target="_blank" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                            <i class="bi bi-whatsapp me-2"></i> Falar com Suporte
+                        </a>
+                    </div>
+                </div>
+                <!-- Background Decorative Elements -->
+                <div class="cta-overlay"></div>
+                <div class="cta-circles">
+                    <div class="circle circle-1"></div>
+                    <div class="circle circle-2"></div>
+                </div>
+            </div>
         </div>
-
-        <div class="welcome-stat-item">
-            <h3>1000+</h3>
-            <p>Pedidos Realizados</p>
-        </div>
-
-        <div class="welcome-stat-item">
-            <h3>4+</h3>
-            <p>Tipos de Serviço</p>
-        </div>
-
-        <div class="welcome-stat-item">
-            <h3>99%</h3>
-            <p>Satisfação</p>
-        </div>
-    </section>
-
-    <section class="welcome-cta-section">
-        <h2>Pronto para começar?</h2>
-        <p>
-            Acesse agora mesmo o sistema e comece a gerenciar sua lavanderia
-            de forma profissional.
-        </p>
-
-        <a asp-controller="Pedidos" asp-action="Create" class="btn btn-light btn-lg welcome-cta-btn">
-            <i class="bi bi-plus-circle-fill"></i> Criar Novo Pedido
-        </a>
     </section>
 </div>
+
+<style>
+    .fw-black { font-weight: 900; }
+    .tracking-tight { letter-spacing: -0.05em; }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%);
+        border-radius: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cta-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+        background-size: 32px 32px;
+    }
+
+    .cta-circles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), transparent);
+    }
+
+    .circle-1 {
+        width: 400px;
+        height: 400px;
+        top: -200px;
+        right: -100px;
+    }
+
+    .circle-2 {
+        width: 300px;
+        height: 300px;
+        bottom: -150px;
+        left: -50px;
+    }
+
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .z-1 { z-index: 1; }
+</style>
