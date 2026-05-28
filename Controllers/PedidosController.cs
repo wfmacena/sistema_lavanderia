@@ -148,20 +148,20 @@ namespace SistemaLavanderia.Controllers
                 decimal valorTotal = 0;
                 foreach (var itemVM in (model.Itens ?? new List<ItemPedidoViewModel>()).Where(i => i.Quantidade > 0))
                 { 
-                    var servico = await _context.Servicos.FindAsync(itemVM.ServicoId);
-                    if (servico != null)
+                    // No PostgreSQL, é mais seguro garantir que o preço venha do modelo se for dinâmico,
+                    // ou do banco se for fixo. Aqui usaremos o preço que o frontend calculou (itemVM.PrecoUnitario)
+                    // para manter a lógica de multiplicadores (Delicada, A Seco, etc.)
+                    
+                    var itemPedido = new ItemPedido
                     {
-                        var itemPedido = new ItemPedido
-                        {
-                            PedidoId = pedido.Id,
-                            TipoPeca = servico.Nome,
-                            Quantidade = itemVM.Quantidade,
-                            ValorUnitario = servico.PrecoBase,
-                            Subtotal = servico.PrecoBase * itemVM.Quantidade
-                        };
-                        _context.ItensPedido.Add(itemPedido);
-                        valorTotal += itemPedido.Subtotal;
-                    }
+                        PedidoId = pedido.Id,
+                        TipoPeca = itemVM.NomeServico,
+                        Quantidade = itemVM.Quantidade,
+                        ValorUnitario = itemVM.PrecoUnitario,
+                        Subtotal = itemVM.PrecoUnitario * itemVM.Quantidade
+                    };
+                    _context.ItensPedido.Add(itemPedido);
+                    valorTotal += itemPedido.Subtotal;
                 }
 
                 pedido.Valor = valorTotal;
