@@ -26,6 +26,24 @@ namespace SistemaLavanderia.Data
                 modelBuilder.UseIdentityByDefaultColumns();
             }
 
+            // Mapeamento explícito para PostgreSQL lidar com tipos numéricos e booleanos
+            modelBuilder.Entity<Servico>(entity =>
+            {
+                entity.Property(e => e.PrecoBase).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Ativo).HasColumnType("boolean");
+            });
+
+            modelBuilder.Entity<ItemPedido>(entity =>
+            {
+                entity.Property(e => e.ValorUnitario).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.Subtotal).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<Pedido>(entity =>
+            {
+                entity.Property(e => e.Valor).HasColumnType("decimal(18,2)");
+            });
+
             modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Cliente)
                 .WithMany()

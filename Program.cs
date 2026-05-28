@@ -18,7 +18,11 @@ builder.Services.AddDbContext<LavanderiaContext>(options =>
     if (!string.IsNullOrEmpty(databaseUrl))
     {
         // Se houver DATABASE_URL (Render), usa PostgreSQL
-        options.UseNpgsql(ParseDatabaseUrl(databaseUrl));
+        options.UseNpgsql(ParseDatabaseUrl(databaseUrl), npgsqlOptions =>
+        {
+            // Força o comportamento de tipos legados se necessário ou garante compatibilidade
+            npgsqlOptions.EnableRetryOnFailure();
+        });
     }
     else
     {
