@@ -152,7 +152,7 @@ namespace SistemaLavanderia.Migrations
                     b.HasAnnotation("Sqlite:Autoincrement", true);
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Descricao")
                         .IsRequired()

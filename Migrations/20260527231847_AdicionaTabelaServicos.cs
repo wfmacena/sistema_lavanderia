@@ -36,7 +36,7 @@ namespace SistemaLavanderia.Migrations
                     Descricao = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     PrecoBase = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     UnidadeMedida = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
