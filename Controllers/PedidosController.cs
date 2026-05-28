@@ -139,32 +139,26 @@ namespace SistemaLavanderia.Controllers
                     StatusPagamento = "Pendente",
                     Observacoes = model.Observacoes,
                     Quantidade = model.Itens?.Where(i => i.Quantidade > 0).Sum(i => i.Quantidade) ?? 0,
-                    Valor = 0 // Será calculado abaixo
+                    ItensPedido = new List<ItemPedido>()
                 };
-
-                _context.Pedidos.Add(pedido);
-                await _context.SaveChangesAsync();
 
                 decimal valorTotal = 0;
                 foreach (var itemVM in (model.Itens ?? new List<ItemPedidoViewModel>()).Where(i => i.Quantidade > 0))
                 { 
-                    // No PostgreSQL, é mais seguro garantir que o preço venha do modelo se for dinâmico,
-                    // ou do banco se for fixo. Aqui usaremos o preço que o frontend calculou (itemVM.PrecoUnitario)
-                    // para manter a lógica de multiplicadores (Delicada, A Seco, etc.)
-                    
                     var itemPedido = new ItemPedido
                     {
-                        PedidoId = pedido.Id,
                         TipoPeca = itemVM.NomeServico,
                         Quantidade = itemVM.Quantidade,
                         ValorUnitario = itemVM.PrecoUnitario,
                         Subtotal = itemVM.PrecoUnitario * itemVM.Quantidade
                     };
-                    _context.ItensPedido.Add(itemPedido);
+                    pedido.ItensPedido.Add(itemPedido);
                     valorTotal += itemPedido.Subtotal;
                 }
 
                 pedido.Valor = valorTotal;
+                
+                _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
 
                 TempData["Sucesso"] = "Pedido realizado com sucesso!";

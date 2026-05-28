@@ -20,7 +20,6 @@ namespace SistemaLavanderia.Models
         [Range(1, 1000)]
         public int Quantidade { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
         [Range(0, 999999.99)]
         public decimal Valor { get; set; }
 
