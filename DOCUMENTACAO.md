@@ -51,8 +51,17 @@ O ciclo de vida do desenvolvimento de software (SDLC) deste projeto foi gerencia
 *   **GitHub Desktop:** Empregado como a interface gráfica principal para facilitar as operações de *commit*, *push* e *pull*, garantindo a integridade do código fonte e a sincronização contínua com o repositório remoto.
 *   **Gestão de Ambientes:** Uso estratégico do arquivo `.gitignore` para separar configurações de ambiente local (SQLite) das configurações de produção, otimizando o fluxo de deploy contínuo (CI/CD).
 
-## 7. CONCLUSÃO
-O sistema de gestão para lavanderia cumpre os requisitos de um software moderno, integrando boas práticas de desenvolvimento web, design responsivo e persistência de dados escalável. A transição para um banco de dados PostgreSQL e a implementação de i18n elevam o projeto de um nível acadêmico para uma solução de mercado (SaaS).
+## 7. QUALIDADE E BOAS PRÁTICAS
+O projeto aplica princípios de **Clean Code** e **SOLID**, buscando um código legível e de fácil manutenção. Foram utilizados:
+*   **XML Documentation:** Comentários estruturados em métodos críticos para facilitar a integração de novos desenvolvedores.
+*   **Validações Robustas:** Uso de `DataAnnotations` nos Models para garantir a integridade dos dados na entrada (frontend e backend).
+*   **Segurança de Rotas:** Filtros de autorização customizados que impedem o acesso a áreas administrativas sem as credenciais adequadas.
+
+## 8. REFERÊNCIAS BIBLIOGRÁFICAS
+Para o embasamento teórico deste projeto, foram consultadas as seguintes obras:
+1.  **SOMMERVILLE, Ian.** *Engenharia de Software*. 10ª ed. Pearson, 2018. (Base para gestão de requisitos e ciclo de vida).
+2.  **MARTIN, Robert C.** *Código Limpo: Habilidades Práticas do Agile Software*. Alta Books, 2009. (Diretrizes para escrita de código profissional).
+3.  **FOWLER, Martin.** *Padrões de Arquitetura de Aplicações Corporativas*. Bookman, 2006. (Fundamentação do padrão MVC).
 
 ---
-**Data de Emissão:** 27 de Maio de 2026
+**Data de Emissão:** 05 de Junho de 2026

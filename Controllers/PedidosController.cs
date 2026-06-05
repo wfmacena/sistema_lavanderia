@@ -6,6 +6,10 @@ using SistemaLavanderia.Models;
 
 namespace SistemaLavanderia.Controllers
 {
+    /// <summary>
+    /// Controller responsável pela gestão do ciclo de vida dos pedidos.
+    /// Gerencia desde a criação pelo cliente até o processamento e entrega pelo administrador.
+    /// </summary>
     public class PedidosController : Controller
     {
         private readonly LavanderiaContext _context;
@@ -15,6 +19,10 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Lista os pedidos com filtros por status e nome do cliente.
+        /// Clientes veem apenas seus pedidos; Administradores veem todos.
+        /// </summary>
         public async Task<IActionResult> Index(string status, string buscaCliente)
         {
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
@@ -53,6 +61,9 @@ namespace SistemaLavanderia.Controllers
             return View(await pedidos.ToListAsync());
         }
 
+        /// <summary>
+        /// Exibe os detalhes de um pedido específico, incluindo itens e status.
+        /// </summary>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -76,6 +87,9 @@ namespace SistemaLavanderia.Controllers
             return View(pedido);
         }
 
+        /// <summary>
+        /// Exibe o formulário de criação de pedido, carregando serviços ativos.
+        /// </summary>
         public IActionResult Create()
         {
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
@@ -104,6 +118,10 @@ namespace SistemaLavanderia.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Processa a criação de um novo pedido com múltiplos itens.
+        /// Calcula automaticamente o valor total com base nos serviços selecionados.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PedidoCreateViewModel model)
@@ -174,6 +192,9 @@ namespace SistemaLavanderia.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Altera o status de processamento de um pedido (Apenas Admin).
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AlterarStatus(int id, string status)
@@ -198,6 +219,9 @@ namespace SistemaLavanderia.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Atualiza o status de pagamento e forma de pagamento de um pedido (Apenas Admin).
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AlterarStatusPagamento(int id, string status, string formaPagamento)

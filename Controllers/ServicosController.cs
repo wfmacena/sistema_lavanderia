@@ -5,6 +5,10 @@ using SistemaLavanderia.Models;
 
 namespace SistemaLavanderia.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo gerenciamento dos serviços oferecidos pela lavanderia.
+    /// Acesso restrito a administradores para operações de escrita.
+    /// </summary>
     public class ServicosController : Controller
     {
         private readonly LavanderiaContext _context;
@@ -14,12 +18,18 @@ namespace SistemaLavanderia.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Lista todos os serviços ativos no sistema.
+        /// </summary>
         public async Task<IActionResult> Index()
         {
             var servicos = await _context.Servicos.Where(s => s.Ativo).ToListAsync();
             return View(servicos);
         }
 
+        /// <summary>
+        /// Exibe o formulário de criação de serviço (Apenas Admin).
+        /// </summary>
         public IActionResult Create()
         {
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
@@ -30,6 +40,9 @@ namespace SistemaLavanderia.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Processa a criação de um novo serviço.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Servico servico)
@@ -46,6 +59,9 @@ namespace SistemaLavanderia.Controllers
             return View(servico);
         }
 
+        /// <summary>
+        /// Exibe o formulário de edição de um serviço existente.
+        /// </summary>
         public async Task<IActionResult> Edit(int? id)
         {
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
@@ -59,6 +75,9 @@ namespace SistemaLavanderia.Controllers
             return View(servico);
         }
 
+        /// <summary>
+        /// Processa a atualização dos dados de um serviço.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Servico servico)
@@ -85,6 +104,9 @@ namespace SistemaLavanderia.Controllers
             return View(servico);
         }
 
+        /// <summary>
+        /// Exibe a confirmação de exclusão de um serviço.
+        /// </summary>
         public async Task<IActionResult> Delete(int? id)
         {
             var perfil = HttpContext.Session.GetString("UsuarioPerfil");
@@ -98,6 +120,9 @@ namespace SistemaLavanderia.Controllers
             return View(servico);
         }
 
+        /// <summary>
+        /// Realiza o Soft Delete do serviço (desativação lógica).
+        /// </summary>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
