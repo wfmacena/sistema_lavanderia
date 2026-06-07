@@ -63,5 +63,10 @@ Para o embasamento teórico deste projeto, foram consultadas as seguintes obras:
 2.  **MARTIN, Robert C.** *Código Limpo: Habilidades Práticas do Agile Software*. Alta Books, 2009. (Diretrizes para escrita de código profissional).
 3.  **FOWLER, Martin.** *Padrões de Arquitetura de Aplicações Corporativas*. Bookman, 2006. (Fundamentação do padrão MVC).
 
+## 9. APRESENTAÇÃO ACADÊMICA
+Como parte integrante da avaliação desta disciplina, o projeto conta com uma apresentação detalhada em vídeo, cobrindo a identificação do problema, a solução proposta, a demonstração das funcionalidades e as tecnologias utilizadas.
+
+📺 **Link para o Vídeo de Apresentação:** [Assista aqui](https://drive.google.com/file/d/1WLL-eT3nTh9uviEgsIo1SfUpQe1YSo83/view?usp=sharing)
+
 ---
 **Data de Emissão:** 05 de Junho de 2026

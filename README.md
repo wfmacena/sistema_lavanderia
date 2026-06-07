@@ -100,6 +100,10 @@ O **Clean T-Shirt** foi projetado para impactar positivamente a sociedade atrav�
 
 👉 Acesse: [https://sistema-lavanderia-flov.onrender.com/](https://sistema-lavanderia-flov.onrender.com/)
 
+## 🎥 Apresentação do Projeto
+
+📺 **Vídeo Demonstrativo:** [Assista aqui a apresentação do projeto e demonstração do sistema](https://drive.google.com/file/d/1WLL-eT3nTh9uviEgsIo1SfUpQe1YSo83/view?usp=sharing)
+
 ---
 
 ## ⚙️ Como executar localmente
