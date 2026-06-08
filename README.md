@@ -102,7 +102,7 @@ O **Clean T-Shirt** foi projetado para impactar positivamente a sociedade atrav�
 
 ## 🎥 Apresentação do Projeto
 
-📺 **Vídeo Demonstrativo:** [Assista aqui a apresentação do projeto e demonstração do sistema](https://drive.google.com/file/d/1WLL-eT3nTh9uviEgsIo1SfUpQe1YSo83/view?usp=sharing)
+📺 **Vídeo Demonstrativo:** [Assista aqui a apresentação do projeto e demonstração do sistema](https://drive.google.com/file/d/1Ivp0EiSChmIqHP-lunzWKbm1vNsR4bET/view?usp=drive_link)
 
 ---
 
